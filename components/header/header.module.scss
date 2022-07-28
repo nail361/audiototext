@@ -1,0 +1,55 @@
+@import "../../styles/variables.scss";
+
+.header {
+  width: 100%;
+  height: $header-height;
+  background-color: $main-color;
+  z-index: 1;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  color: white;
+  padding: 10px;
+
+  &-row {
+    display: flex;
+    flex-direction: row;
+    max-width: 960px;
+    margin: 0 auto;
+
+    &__logo {
+      width: 50%;
+    }
+  }
+
+  &-nav {
+    width: 50%;
+
+    &__link:not(:last-child) {
+      margin-right: 18px;
+      position: relative;
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 1px;
+        height: 15px;
+        top: 7px;
+        right: -10px;
+        background-color: white;
+      }
+    }
+
+    &__link_active {
+      text-decoration: underline;
+    }
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  max-width: 960px;
+}
