@@ -1,14 +1,15 @@
 import { FunctionComponent, useEffect } from "react";
 import { useRouter } from "next/router";
+import { withTranslation } from "next-i18next";
 
-const Custom404: FunctionComponent = () => {
+const Custom404: FunctionComponent = ({ t }) => {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/");
+    setTimeout(() => router.replace("/"), 1000);
   }, [router]);
 
-  return null;
+  return <div suppressHydrationWarning>{t("redirect")}</div>;
 };
 
-export default Custom404;
+export default withTranslation("404")(Custom404);

@@ -27,23 +27,20 @@
   &-nav {
     width: 50%;
 
-    &__link:not(:last-child) {
-      margin-right: 18px;
-      position: relative;
+    &__link {
+      opacity: 0.8;
 
-      &::after {
-        content: "";
-        position: absolute;
-        width: 1px;
-        height: 15px;
-        top: 7px;
-        right: -10px;
-        background-color: white;
+      &:hover {
+        color: rgb(255, 209, 209);
+      }
+
+      &:not(:last-child) {
+        margin-right: 1.5rem;
       }
     }
 
     &__link_active {
-      text-decoration: underline;
+      opacity: 1;
     }
   }
 }

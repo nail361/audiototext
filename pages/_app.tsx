@@ -1,6 +1,7 @@
 import "../styles/globals.scss";
 import "../styles/reset.css";
 import type { AppProps } from "next/app";
+import { Suspense } from "react";
 import Head from "next/head";
 import Layout from "../components/layout/layout";
 import { appWithTranslation } from "next-i18next";
@@ -14,9 +15,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Head>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <Suspense fallback="loading">
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </Suspense>
     </Provider>
   );
 }

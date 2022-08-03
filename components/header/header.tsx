@@ -11,12 +11,14 @@ const cn = classNames.bind(styles);
 const Header: FunctionComponent = () => {
   const router = useRouter();
 
+  // if (router.pathname !== "/auth" && router.pathname !== "/") return null;
+
   const { t, i18n } = useTranslation(["header"], {
     bindI18n: "languageChanged loaded",
   });
 
   useEffect(() => {
-    i18n.reloadResources(i18n.resolvedLanguage, ["header"]);
+    if (i18n) i18n.reloadResources(i18n.resolvedLanguage, ["header"]);
   }, [i18n]);
 
   return (
@@ -33,6 +35,28 @@ const Header: FunctionComponent = () => {
               })}
             >
               {t("main")}
+            </a>
+          </Link>
+          <Link href="/auth">
+            <a
+              suppressHydrationWarning
+              className={cn({
+                "header-nav__link": true,
+                "header-nav__link_active": router.pathname == "/auth",
+              })}
+            >
+              {t("auth")}
+            </a>
+          </Link>
+          <Link href="/contacts">
+            <a
+              suppressHydrationWarning
+              className={cn({
+                "header-nav__link": true,
+                "header-nav__link_active": router.pathname == "/contacts",
+              })}
+            >
+              {t("contacts")}
             </a>
           </Link>
         </nav>

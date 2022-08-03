@@ -20,10 +20,10 @@ module.exports = {
     locales: ["en", "ru"],
   },
   defaultNS: [],
-  // react: {
-  //   wait: true,
-  // },
-  //serializeConfig: false,
-  useSuspense: true,
+  react: {
+    wait: true,
+    useSuspense: true,
+  },
+  // serializeConfig: false,
   use: isBrowser ? [ChainedBackend] : [],
 };
