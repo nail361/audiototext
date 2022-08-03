@@ -12,6 +12,8 @@ const Header: FunctionComponent = () => {
   const { t, ready } = useTranslation("header");
   const router = useRouter();
 
+  if (!ready) return "loading translations...";
+
   return (
     <header className={cn("header")}>
       <div className={cn("header-row")}>
@@ -24,7 +26,7 @@ const Header: FunctionComponent = () => {
                 "header-nav__link_active": router.pathname == "/",
               })}
             >
-              {ready ? t("main") : "Главная"}
+              {t("main")}
             </a>
           </Link>
         </nav>

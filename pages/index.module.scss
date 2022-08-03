@@ -1,0 +1,22 @@
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-basis: 50%;
+}
+
+.column_left {
+}
+
+.column_right {
+  &__image {
+    width: 250px;
+    height: 250px;
+  }
+}
