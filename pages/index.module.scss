@@ -1,20 +1,42 @@
+@import "../styles/variables.scss";
+
 .row {
   display: flex;
   flex-direction: row;
+  color: $main-color;
 }
 
 .column {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   flex-basis: 50%;
+
+  &__title {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+
+  &__description {
+    margin: 0.5em 0;
+  }
+
+  &__ul {
+    padding-left: 25px;
+  }
+
+  &__li {
+    list-style-image: url("/icons/li_marker.png");
+  }
 }
 
 .column_left {
+  align-items: flex-start;
 }
 
 .column_right {
+  align-items: center;
+
   &__image {
     width: 250px;
     height: 250px;

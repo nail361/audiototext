@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,10 +9,15 @@ import styles from "./header.module.scss";
 const cn = classNames.bind(styles);
 
 const Header: FunctionComponent = () => {
-  const { t, ready } = useTranslation("header");
   const router = useRouter();
 
-  if (!ready) return "loading translations...";
+  const { t, i18n } = useTranslation(["header"], {
+    bindI18n: "languageChanged loaded",
+  });
+
+  useEffect(() => {
+    i18n.reloadResources(i18n.resolvedLanguage, ["header"]);
+  }, [i18n]);
 
   return (
     <header className={cn("header")}>
@@ -21,6 +26,7 @@ const Header: FunctionComponent = () => {
         <nav className={cn("header-nav")}>
           <Link href="/">
             <a
+              suppressHydrationWarning
               className={cn({
                 "header-nav__link": true,
                 "header-nav__link_active": router.pathname == "/",

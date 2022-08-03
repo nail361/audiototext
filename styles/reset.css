@@ -5,12 +5,6 @@
   box-sizing: border-box;
 }
 
-/* Убираем внутренние отступы */
-ul[class],
-ol[class] {
-  padding: 0;
-}
-
 /* Убираем внешние отступы */
 body,
 h1,

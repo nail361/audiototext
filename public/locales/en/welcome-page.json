@@ -1,3 +1,13 @@
 {
-  "mainTitle": "Recognition of audio and video into text"
+  "mainTitle": {
+    "line1": "Recognition",
+    "line2": "of audio and video",
+    "line3": "into text"
+  },
+  "description": "Use an audio transcriber, save your time!",
+  "list": {
+    "li1": "Удобный редактор с метками времени",
+    "li2": "Выгрузка текста и монтажного листа для подкастов",
+    "li3": "Понимаем русский и английский"
+  }
 }

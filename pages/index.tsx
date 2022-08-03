@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import { useEffect } from "react";
 import Image from "next/image";
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -12,20 +11,20 @@ import styles from "./index.module.scss";
 const cn = classNames.bind(styles);
 
 const Welcome: NextPage = () => {
-  // const { t, i18n } = useTranslation("welcome-page", {
-  //   bindI18n: "languageChanged loaded",
-  // });
-
-  // useEffect(() => {
-  //   i18n.reloadResources(i18n.resolvedLanguage, "welcome-page");
-  // }, []);
-
   const { t } = useTranslation("welcome-page");
 
   return (
     <div className={cn("row")}>
       <div className={cn({ column: true, column_left: true })}>
-        <h1>{t("mainTitle")}</h1>
+        <h1 className={cn("column__title")}>{t("mainTitle.line1")}</h1>
+        <h1 className={cn("column__title")}>{t("mainTitle.line2")}</h1>
+        <h1 className={cn("column__title")}>{t("mainTitle.line3")}</h1>
+        <p className={cn("column__description")}>{t("description")}</p>
+        <ul className={cn("column__ul")}>
+          <li className={cn("column__li")}>{t("list.li1")}</li>
+          <li className={cn("column__li")}>{t("list.li2")}</li>
+          <li className={cn("column__li")}>{t("list.li3")}</li>
+        </ul>
       </div>
       <div className={cn({ column: true, column_right: true })}>
         <div className={cn("column_right__image")}>
