@@ -1,25 +1,16 @@
-import { FunctionComponent, useEffect } from "react";
-import { useTranslation } from "next-i18next";
+import { FunctionComponent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import classNames from "classnames/bind";
 import styles from "./header.module.scss";
+import type { WithTranslation } from "../../types/withTranslation";
 
 const cn = classNames.bind(styles);
 
-const Header: FunctionComponent = () => {
+const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
   const router = useRouter();
-
-  // if (router.pathname !== "/auth" && router.pathname !== "/") return null;
-
-  const { t, i18n } = useTranslation(["header"], {
-    bindI18n: "languageChanged loaded",
-  });
-
-  useEffect(() => {
-    if (i18n) i18n.reloadResources(i18n.resolvedLanguage, ["header"]);
-  }, [i18n]);
+  const { t } = props;
 
   return (
     <header className={cn("header")}>
@@ -46,17 +37,6 @@ const Header: FunctionComponent = () => {
               })}
             >
               {t("auth")}
-            </a>
-          </Link>
-          <Link href="/contacts">
-            <a
-              suppressHydrationWarning
-              className={cn({
-                "header-nav__link": true,
-                "header-nav__link_active": router.pathname == "/contacts",
-              })}
-            >
-              {t("contacts")}
             </a>
           </Link>
         </nav>
