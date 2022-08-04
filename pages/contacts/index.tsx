@@ -33,20 +33,14 @@ const Contacts: NextPage = () => {
           title={t("telega-group")}
           target="_blank"
           rel="noreferrer"
-          className={cn({
-            messengers__icon: true,
-            messengers__icon_telegram: true,
-          })}
+          className={cn("messengers__icon", "messengers__icon_telegram")}
         ></a>
         <a
           href="https://t.me/audiototext_admin"
           title={t("telega-developer")}
           target="_blank"
           rel="noreferrer"
-          className={cn({
-            messengers__icon: true,
-            messengers__icon_telegram: true,
-          })}
+          className={cn("messengers__icon", "messengers__icon_telegram")}
         ></a>
       </div>
     </div>

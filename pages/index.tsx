@@ -23,7 +23,7 @@ const Welcome: NextPage = () => {
 
   for (let i = 0; i < featuresArr.length; i++) {
     featuresArr[i] = (
-      <div className={cn("item")}>
+      <div key={i} className={cn("item")}>
         <div className={cn("item__image")}>
           <Image
             src={`/images/features/${i + 1}.png`}
@@ -53,7 +53,7 @@ const Welcome: NextPage = () => {
   return (
     <>
       <div className={cn("row")}>
-        <div className={cn({ column: true, column_left: true })}>
+        <div className={cn("column", "column_left")}>
           <h1 className={cn("column__title")}>{t("mainTitle.line1")}</h1>
           <h1 className={cn("column__title")}>{t("mainTitle.line2")}</h1>
           <h1 className={cn("column__title")}>{t("mainTitle.line3")}</h1>
@@ -70,7 +70,7 @@ const Welcome: NextPage = () => {
             {t("startBtn")}
           </button>
         </div>
-        <div className={cn({ column: true, column_right: true })}>
+        <div className={cn("column", "column_right")}>
           <div className={cn("column_right__image")}>
             <Image
               src="/images/mainPage.png"

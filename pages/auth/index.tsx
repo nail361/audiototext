@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -12,12 +11,24 @@ const cn = classNames.bind(styles);
 
 const Auth: NextPage = () => {
   const { t } = useTranslation("auth");
-  const router = useRouter();
   const [authType, setAuthType] = useState("login"); //login or register
+  const [rulesWindow, setRulesWindow] = useState(false);
   const isLogin = authType == "login";
 
   const goToRegister = () => {
     setAuthType("register");
+  };
+
+  const goToLogin = () => {
+    setAuthType("login");
+  };
+
+  const sendData = () => {
+    console.log(isLogin);
+  };
+
+  const showRules = () => {
+    setRulesWindow(true);
   };
 
   return (
@@ -25,11 +36,50 @@ const Auth: NextPage = () => {
       <h1 className={cn("auth_card__header")}>
         {t("title", { context: authType })}
       </h1>
-      {isLogin && (
-        <p className={cn("auth_card__register")} onClick={goToRegister}>
-          {t("register")}
+      <form onSubmit={sendData} className={cn("form")}>
+        {!isLogin && (
+          <div className={cn("form__item")}>
+            <label htmlFor="name">{t("name")}:</label>
+            <input id="name" type="text" />
+          </div>
+        )}
+        <div className={cn("form__item")}>
+          <label htmlFor="email">{t("email")}:</label>
+          <input id="email" type="email" />
+        </div>
+        <div className={cn("form__item")}>
+          <label htmlFor="password">{t("password")}:</label>
+          <input id="password" type="password" />
+        </div>
+        {!isLogin && (
+          <div className={cn("form__item", "form__item_rules")}>
+            <input
+              className={cn("rules")}
+              type="checkbox"
+              name="rules"
+              id="rules"
+            />
+            <span>
+              soglasen s <span onClick={showRules}>pravila</span>
+            </span>
+          </div>
+        )}
+        <div className={cn("form__item")}>
+          <button type="submit" className={cn("form__submit")}>
+            {isLogin ? t("login-btn") : t("register-btn")}
+          </button>
+        </div>
+      </form>
+      <div className={cn("footer")}>
+        <p
+          className={cn("auth_card__register")}
+          onClick={() => {
+            isLogin ? goToRegister() : goToLogin();
+          }}
+        >
+          {isLogin ? t("register") : t("login")}
         </p>
-      )}
+      </div>
     </div>
   );
 };
