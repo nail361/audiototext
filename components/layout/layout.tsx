@@ -12,7 +12,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const protectedPages = ["/profile"];
+const protectedPages = ["/profile", "/wallet"];
 
 const Layout: FunctionComponent<Props> = (props) => {
   const { t, i18n } = useTranslation(["common"], {
@@ -24,7 +24,7 @@ const Layout: FunctionComponent<Props> = (props) => {
   }, [i18n]);
 
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
-  const [protectedPage, setProtectedPage] = useState(true);
+  const [protectedPage, setProtectedPage] = useState(false);
   const router = useRouter();
 
   useEffect(() => {

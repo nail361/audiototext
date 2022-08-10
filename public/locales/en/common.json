@@ -1,5 +1,7 @@
 {
   "main": "Main",
   "auth": "Login",
+  "profile": "Profile",
+  "logout": "Logout",
   "contacts": "Contacts"
 }

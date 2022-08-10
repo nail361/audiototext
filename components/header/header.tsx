@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { RootState } from "../../store";
@@ -13,13 +13,25 @@ const cn = classNames.bind(styles);
 
 const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
   const router = useRouter();
+  const [showChild, setShowChild] = useState(false); //fix for react 18
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
+  const money = useSelector((state: RootState) => state.wallet.money);
   const dispatch = useDispatch();
   const { t } = props;
+
+  useEffect(() => {
+    setShowChild(true);
+  }, []);
 
   const logOut = () => {
     dispatch(authActions.logout());
   };
+
+  if (!showChild) {
+    return null;
+  }
+
+  if (typeof window === "undefined") return <></>;
 
   return (
     <header className={cn("header")}>
@@ -28,7 +40,6 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
         <nav className={cn("header-nav")}>
           <Link href="/">
             <a
-              suppressHydrationWarning
               className={cn({
                 "header-nav__link": true,
                 "header-nav__link_active": router.pathname == "/",
@@ -40,7 +51,6 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
           {!isAuth && (
             <Link href="/auth">
               <a
-                suppressHydrationWarning
                 className={cn({
                   "header-nav__link": true,
                   "header-nav__link_active": router.pathname == "/auth",
@@ -51,13 +61,35 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
             </Link>
           )}
           {isAuth && (
-            <a
-              suppressHydrationWarning
-              onClick={logOut}
-              className={cn("header-nav__link")}
-            >
-              {t("logout")}
-            </a>
+            <>
+              <Link href="/profile">
+                <a
+                  className={cn({
+                    "header-nav__link": true,
+                    "header-nav__link_active": router.pathname == "/profile",
+                  })}
+                >
+                  {t("profile")}
+                </a>
+              </Link>
+              <Link href="/wallet">
+                <a
+                  className={cn({
+                    "header-nav__link": true,
+                    "header-nav__link_wallet": true,
+                    "header-nav__link_active": router.pathname == "/wallet",
+                  })}
+                >
+                  {money} р.
+                </a>
+              </Link>
+              <a
+                onClick={logOut}
+                className={cn("header-nav__link", "header-nav__link_logout")}
+              >
+                {t("logout")}
+              </a>
+            </>
           )}
         </nav>
       </div>

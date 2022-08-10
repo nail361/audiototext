@@ -40,12 +40,8 @@ const Welcome: NextPage = () => {
     );
   }
 
-  console.log(ready);
-
-  console.log(featuresArr);
-
   const onStartClickHandler = () => {
-    if (isAuth) router.push("/local-storage");
+    if (isAuth) router.push("/profile");
     else router.push("/auth");
   };
 

@@ -20,29 +20,48 @@
     margin: 0 auto;
 
     &__logo {
-      width: 50%;
+      width: 35%;
     }
   }
 
   &-nav {
-    width: 50%;
+    width: 65%;
     text-align: right;
 
     &__link {
       opacity: 0.8;
       cursor: pointer;
+      margin-right: 1.5rem;
 
       &:hover {
-        color: rgb(255, 209, 209);
+        color: white;
+        opacity: 1;
       }
 
-      &:not(:last-child) {
-        margin-right: 1.5rem;
-      }
-    }
+      &_wallet {
+        position: relative;
+        margin-right: 3rem;
 
-    &__link_active {
-      opacity: 1;
+        &::after {
+          content: "";
+          position: absolute;
+          top: -8px;
+          right: -35px;
+          background-image: url("/icons/wallet.png");
+          background-repeat: no-repeat;
+          display: block;
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      &_logout {
+        margin-left: 2rem;
+      }
+
+      &_active {
+        opacity: 1;
+      }
     }
   }
 }

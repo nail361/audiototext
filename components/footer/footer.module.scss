@@ -1,8 +1,11 @@
+@import "../../styles/variables.scss";
+
 .footer {
   display: flex;
   justify-content: center;
-  background-color: beige;
+  background-color: $main-color;
   font-size: 16px;
+  color: white;
 
   &__link {
     margin-left: 20px;
