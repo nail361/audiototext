@@ -1,6 +1,9 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { RootState } from "../../store";
+import { useSelector, useDispatch } from "react-redux";
+import { authActions } from "../../store/auth";
 
 import classNames from "classnames/bind";
 import styles from "./header.module.scss";
@@ -10,7 +13,13 @@ const cn = classNames.bind(styles);
 
 const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
   const router = useRouter();
+  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
+  const dispatch = useDispatch();
   const { t } = props;
+
+  const logOut = () => {
+    dispatch(authActions.logout());
+  };
 
   return (
     <header className={cn("header")}>
@@ -28,17 +37,28 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
               {t("main")}
             </a>
           </Link>
-          <Link href="/auth">
+          {!isAuth && (
+            <Link href="/auth">
+              <a
+                suppressHydrationWarning
+                className={cn({
+                  "header-nav__link": true,
+                  "header-nav__link_active": router.pathname == "/auth",
+                })}
+              >
+                {t("auth")}
+              </a>
+            </Link>
+          )}
+          {isAuth && (
             <a
               suppressHydrationWarning
-              className={cn({
-                "header-nav__link": true,
-                "header-nav__link_active": router.pathname == "/auth",
-              })}
+              onClick={logOut}
+              className={cn("header-nav__link")}
             >
-              {t("auth")}
+              {t("logout")}
             </a>
-          </Link>
+          )}
         </nav>
       </div>
     </header>

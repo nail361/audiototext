@@ -48,8 +48,17 @@
     &_rules {
       height: 30px;
 
-      .rules {
+      .checkbox {
         width: 15%;
+      }
+
+      .rules {
+        color: $main-color;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
@@ -67,5 +76,10 @@
     border: none;
     color: white;
     cursor: pointer;
+
+    &_disabled {
+      cursor: auto;
+      background-color: grey;
+    }
   }
 }

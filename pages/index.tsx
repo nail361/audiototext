@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { NextPage, GetStaticProps } from "next";
 import { RootState } from "../store";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import { useTranslation } from "next-i18next";
-import { GetStaticProps } from "next";
 
 import classNames from "classnames/bind";
 import styles from "./index.module.scss";
