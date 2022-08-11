@@ -47,7 +47,7 @@ const Wallet: NextPage = () => {
   };
 
   return (
-    <div className={cn("wallet")}>
+    <div className={cn("card", "wallet")}>
       <h1>{t("balance")}</h1>
       <p className={cn("wallet__balance")}>
         <strong>{money}</strong> рублей.

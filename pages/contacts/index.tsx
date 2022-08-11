@@ -12,8 +12,8 @@ const Contacts: NextPage = () => {
   const { t } = useTranslation("contacts");
 
   return (
-    <div className={cn("card")}>
-      <div className={cn("contacts")}>
+    <div className={cn("card", "contacts")}>
+      <div className={cn("fields")}>
         <p>
           <strong>{t("email")}:</strong> shubinm.ip@gmail.com
         </p>

@@ -64,7 +64,7 @@ const Auth: NextPage = () => {
   };
 
   return (
-    <div className={cn("auth_card")}>
+    <div className={cn("card", "auth_card")}>
       <h1 className={cn("auth_card__header")}>
         {t("title", { context: authType })}
       </h1>
@@ -119,8 +119,8 @@ const Auth: NextPage = () => {
         <div className={cn("form__item")}>
           <button
             type="submit"
-            className={cn("form__submit", {
-              form__submit_disabled: !(isLogin || canRegister),
+            className={cn("btn", {
+              disabled: !(isLogin || canRegister),
             })}
           >
             {isLogin ? t("login-btn") : t("register-btn")}

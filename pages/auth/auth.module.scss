@@ -1,18 +1,8 @@
 @import "../../styles/variables.scss";
 
 .auth_card {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-
   width: 350px;
   height: 300px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.2);
-  margin: 0 auto;
-  padding: 10px 0;
 
   &__header {
     width: 90%;
@@ -21,7 +11,7 @@
   }
 
   .footer {
-    margin-top: 20px;
+    margin-top: 10px;
     width: 80%;
     height: 20px;
     text-align: right;
@@ -67,19 +57,6 @@
     }
     input {
       width: 70%;
-    }
-  }
-
-  &__submit {
-    margin: 0 auto;
-    background-color: $main-color;
-    border: none;
-    color: white;
-    cursor: pointer;
-
-    &_disabled {
-      cursor: auto;
-      background-color: grey;
     }
   }
 }
