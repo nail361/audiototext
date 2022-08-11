@@ -1,0 +1,12 @@
+{
+  "choose_audio": "Choose audio",
+  "choosen_audio": "Choosen: ",
+  "no_audio": "No audio, upload a new one",
+  "table": {
+    "caption": "Audio list",
+    "date": "Date",
+    "name": "Name",
+    "duration": "Duration",
+    "cost": "Cost"
+  }
+}
