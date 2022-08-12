@@ -12,7 +12,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const protectedPages = ["/profile", "/wallet"];
+const protectedPages = ["/profile", "/wallet", "/edit"];
 
 const Layout: FunctionComponent<Props> = (props) => {
   const { t, i18n } = useTranslation(["common"], {

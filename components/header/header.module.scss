@@ -29,14 +29,8 @@
     text-align: right;
 
     &__link {
-      opacity: 0.8;
       cursor: pointer;
       margin-right: 1.5rem;
-
-      &:hover {
-        color: white;
-        opacity: 1;
-      }
 
       &_wallet {
         position: relative;
@@ -60,7 +54,7 @@
       }
 
       &_active {
-        opacity: 1;
+        text-decoration: underline;
       }
     }
   }

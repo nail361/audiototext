@@ -7,6 +7,13 @@
     "date": "Date",
     "name": "Name",
     "duration": "Duration",
-    "cost": "Cost"
+    "cost": "Cost",
+    "detect": "Detect for: ",
+    "edit": "Edit",
+    "delete": "Detele"
+  },
+  "language": {
+    "ru": "russian",
+    "en": "english"
   }
 }

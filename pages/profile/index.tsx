@@ -1,6 +1,7 @@
 import type { NextPage, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
 import Image from "next/image";
 
 import classNames from "classnames/bind";
@@ -12,6 +13,7 @@ const cn = classNames.bind(styles);
 
 const Profile: NextPage = () => {
   const { t } = useTranslation("profile");
+  const router = useRouter();
   const [filesCount, setFilesCount] = useState(0);
   const [audio, setAudio] = useState<Audio[]>([]);
   const [isUpload, setUpload] = useState(false);
@@ -28,9 +30,11 @@ const Profile: NextPage = () => {
       {
         id: "1",
         date: "12.30.2022",
-        name: "audio1",
+        name: "audio1 so long name for this field",
         duration: "01:33",
-        cost: "50rub",
+        cost: "500",
+        ready: false,
+        detecting: false,
       },
     ]);
   };
@@ -61,9 +65,49 @@ const Profile: NextPage = () => {
     // setUpload(false);
   };
 
+  const detectAudio = (id: string) => {
+    const newAudio = audio.map((audio) => {
+      if (audio.id == id) audio.detecting = true;
+      return audio;
+    });
+    setAudio(newAudio);
+
+    setTimeout(() => detectingReady(id), 1000);
+  };
+
+  const editAudio = (id: string) => {
+    router.push(`/edit/${id}`);
+  };
+
+  const deleteAudio = (id: string) => {
+    const newAudio = audio.filter((audio) => audio.id != id);
+    setAudio(newAudio);
+  };
+
+  const detectingReady = (id: string) => {
+    const newAudio = audio.map((audio) => {
+      if (audio.id == id) {
+        audio.detecting = false;
+        audio.ready = true;
+      }
+      return audio;
+    });
+    setAudio(newAudio);
+  };
+
+  const detectingError = (id: string) => {
+    const newAudio = audio.map((audio) => {
+      if (audio.id == id) {
+        audio.detecting = false;
+      }
+      return audio;
+    });
+    setAudio(newAudio);
+  };
+
   if (audio.length) {
     audioList = (
-      <table>
+      <table className={cn("audio_list__table")}>
         <caption>{t("table.caption")}</caption>
         <thead>
           <tr>
@@ -79,6 +123,38 @@ const Profile: NextPage = () => {
               <td>{audio.date}</td>
               <td>{audio.name}</td>
               <td>{audio.duration}</td>
+              <td>
+                {audio.detecting && <span>loading</span>}
+                {!audio.ready && !audio.detecting && (
+                  <>
+                    <select>
+                      <option value="ru">{t("language.ru")}</option>
+                      <option value="en">{t("language.en")}</option>
+                    </select>
+                    <div
+                      title={`${t("detect")} ${audio.cost}руб.`}
+                      className={cn("audio_list__detect")}
+                      onClick={() => detectAudio(audio.id)}
+                    >
+                      {audio.cost}
+                    </div>
+                  </>
+                )}
+                <div
+                  title={t("edit")}
+                  className={cn("audio_list__edit", {
+                    audio_list__edit_hide: !audio.ready,
+                  })}
+                  onClick={() => editAudio(audio.id)}
+                ></div>
+                <div
+                  title={t("delete")}
+                  className={cn("audio_list__delete", {
+                    audio_list__delete_hide: audio.detecting,
+                  })}
+                  onClick={() => deleteAudio(audio.id)}
+                ></div>
+              </td>
             </tr>
           ))}
         </tbody>
