@@ -6,17 +6,19 @@ import Image from "next/image";
 
 import classNames from "classnames/bind";
 import styles from "./profile.module.scss";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import Audio from "../../models/audio";
+import Prompt from "../../components/prompt";
 
 const cn = classNames.bind(styles);
 
 const Profile: NextPage = () => {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation(["profile", "common"]);
   const router = useRouter();
   const [filesCount, setFilesCount] = useState(0);
   const [audio, setAudio] = useState<Audio[]>([]);
   const [isUpload, setUpload] = useState(false);
+  const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   let audioList = null;
 
   useEffect(() => {
@@ -84,6 +86,25 @@ const Profile: NextPage = () => {
     setAudio(newAudio);
   };
 
+  const deleteAudioPrompt = (id: string) => {
+    setPromptDialog(
+      <Prompt
+        t={t}
+        title={t("delete_prompt.title")}
+        text={t("delete_prompt.text")}
+        onAccept={() => {
+          deleteAudio(id);
+          closePromptDialog();
+        }}
+        onDeny={closePromptDialog}
+      />
+    );
+  };
+
+  const closePromptDialog = () => {
+    setPromptDialog(null);
+  };
+
   const detectingReady = (id: string) => {
     const newAudio = audio.map((audio) => {
       if (audio.id == id) {
@@ -107,7 +128,7 @@ const Profile: NextPage = () => {
 
   if (audio.length) {
     audioList = (
-      <table className={cn("audio_list__table")}>
+      <table className={cn("audio-list__table")}>
         <caption>{t("table.caption")}</caption>
         <thead>
           <tr>
@@ -133,7 +154,7 @@ const Profile: NextPage = () => {
                     </select>
                     <div
                       title={`${t("detect")} ${audio.cost}руб.`}
-                      className={cn("audio_list__detect")}
+                      className={cn("audio-list__detect")}
                       onClick={() => detectAudio(audio.id)}
                     >
                       {audio.cost}
@@ -142,17 +163,17 @@ const Profile: NextPage = () => {
                 )}
                 <div
                   title={t("edit")}
-                  className={cn("audio_list__edit", {
-                    audio_list__edit_hide: !audio.ready,
+                  className={cn("audio-list__edit", {
+                    "audio-list__edit_hide": !audio.ready,
                   })}
                   onClick={() => editAudio(audio.id)}
                 ></div>
                 <div
                   title={t("delete")}
-                  className={cn("audio_list__delete", {
-                    audio_list__delete_hide: audio.detecting,
+                  className={cn("audio-list__delete", {
+                    "audio-list__delete_hide": audio.detecting,
                   })}
-                  onClick={() => deleteAudio(audio.id)}
+                  onClick={() => deleteAudioPrompt(audio.id)}
                 ></div>
               </td>
             </tr>
@@ -166,20 +187,21 @@ const Profile: NextPage = () => {
 
   return (
     <>
-      <div className={cn("file_uploader")}>
+      {promptDialog}
+      <div className={cn("file-uploader")}>
         <input
           name="file-uploader"
           id="file-uploader"
           multiple
           type="file"
           accept="audio/*"
-          className={cn("file_uploader__input")}
+          className={cn("file-uploader__input")}
           onChange={readFiles}
         />
         <label
           htmlFor="file-uploader"
-          className={cn("file_uploader__btn", {
-            file_uploader__btn_disabled: isUpload,
+          className={cn("file-uploader__btn", {
+            "file-uploader__btn_disabled": isUpload,
           })}
         >
           <span className={cn("icon_wrapper")}>
@@ -201,7 +223,7 @@ const Profile: NextPage = () => {
           </span>
         </label>
       </div>
-      <div className={cn("audio_list")}>{audioList}</div>
+      <div className={cn("audio-list")}>{audioList}</div>
     </>
   );
 };
@@ -211,7 +233,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["profile"])),
+      ...(await serverSideTranslations(locale, ["profile", "common"])),
     },
     revalidate: 10,
   };

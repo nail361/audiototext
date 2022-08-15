@@ -15,7 +15,6 @@ const Auth: NextPage = () => {
   const { t } = useTranslation("auth");
   const router = useRouter();
   const [authType, setAuthType] = useState("login"); //login or register
-  const [rulesWindow, setRulesWindow] = useState(false);
   const [canRegister, setCanRegister] = useState(false);
   const isLogin = authType == "login";
   const dispath = useDispatch();
@@ -59,13 +58,9 @@ const Auth: NextPage = () => {
     // fetch("");
   };
 
-  const showRules = () => {
-    setRulesWindow(true);
-  };
-
   return (
-    <div className={cn("card", "auth_card")}>
-      <h1 className={cn("auth_card__header")}>
+    <div className={cn("card", "auth-card")}>
+      <h1 className={cn("auth-card__header")}>
         {t("title", { context: authType })}
       </h1>
       <form onSubmit={sendData} className={cn("form")}>
@@ -110,9 +105,14 @@ const Auth: NextPage = () => {
             />
             <span>
               {t("licence.left_part")}
-              <span className={cn("rules")} onClick={showRules}>
+              <a
+                href="https://www.google.com"
+                rel="noreferrer"
+                className={cn("rules")}
+                target="_blank"
+              >
                 {t("licence.right_part")}
-              </span>
+              </a>
             </span>
           </div>
         )}
@@ -129,7 +129,7 @@ const Auth: NextPage = () => {
       </form>
       <div className={cn("footer")}>
         <p
-          className={cn("auth_card__register")}
+          className={cn("auth-card__register")}
           onClick={() => {
             isLogin ? goToRegister() : goToLogin();
           }}

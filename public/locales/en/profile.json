@@ -15,5 +15,9 @@
   "language": {
     "ru": "russian",
     "en": "english"
+  },
+  "delete_prompt": {
+    "title": "Are you sure to delete?",
+    "text": "This audio will be remove forever"
   }
 }

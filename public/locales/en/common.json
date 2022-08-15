@@ -3,5 +3,9 @@
   "auth": "Login",
   "profile": "Profile",
   "logout": "Logout",
-  "contacts": "Contacts"
+  "contacts": "Contacts",
+  "prompt": {
+    "accept": "OK",
+    "deny": "CANCEL"
+  }
 }

@@ -3,5 +3,9 @@
   "auth": "Вход",
   "profile": "Профиль",
   "logout": "Выход",
-  "contacts": "Контакты"
+  "contacts": "Контакты",
+  "prompt": {
+    "accept": "Ок",
+    "deny": "Отмена"
+  }
 }
