@@ -87,36 +87,3 @@ ul {
     background-color: grey;
   }
 }
-
-.pagination {
-  display: flex;
-  flex-direction: row;
-  padding: 0;
-
-  .page {
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: $light-color;
-    border-radius: 5px;
-    min-width: 30px;
-    height: 30px;
-    color: white;
-    margin: 0 5px;
-
-    &.selected {
-      background-color: $main-color;
-    }
-
-    &:hover {
-      background-color: $main-color;
-    }
-
-    &.disabled {
-      background-color: lightgray;
-      cursor: auto;
-    }
-  }
-}

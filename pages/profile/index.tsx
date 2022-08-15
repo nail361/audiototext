@@ -1,3 +1,4 @@
+import React from "react";
 import type { NextPage, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -6,13 +7,14 @@ import Image from "next/image";
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import Audio from "../../models/audio";
 import Prompt from "../../components/prompt";
-import ReactPaginate from "react-paginate";
 import AudioItem from "../../components/audioItem";
 
 import classNames from "classnames/bind";
 import styles from "./profile.module.scss";
 
 const cn = classNames.bind(styles);
+
+const Paginator = React.lazy(() => import("../../components/paginator"));
 
 const itemsPerPage = 10;
 
@@ -219,18 +221,7 @@ const Profile: NextPage = () => {
       <div className={cn("audio-list")}>{audioList}</div>
       {pageCount > 1 && (
         <div className={cn("pagination-wrapper")}>
-          <ReactPaginate
-            className={cn("pagination")}
-            pageClassName={cn("page")}
-            previousClassName={cn("page", "previous")}
-            nextClassName={cn("page", "next")}
-            breakLabel="..."
-            nextLabel=">"
-            onPageChange={handlePageClick}
-            pageRangeDisplayed={5}
-            pageCount={pageCount}
-            previousLabel="<"
-          />
+          <Paginator pageCount={pageCount} handlePageClick={handlePageClick} />
         </div>
       )}
     </>
