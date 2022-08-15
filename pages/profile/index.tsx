@@ -9,8 +9,11 @@ import styles from "./profile.module.scss";
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import Audio from "../../models/audio";
 import Prompt from "../../components/prompt";
+import ReactPaginate from "react-paginate";
 
 const cn = classNames.bind(styles);
+
+const itemsPerPage = 10;
 
 const Profile: NextPage = () => {
   const { t } = useTranslation(["profile", "common"]);
@@ -18,18 +21,21 @@ const Profile: NextPage = () => {
   const [filesCount, setFilesCount] = useState(0);
   const [audio, setAudio] = useState<Audio[]>([]);
   const [isUpload, setUpload] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   let audioList = null;
 
   useEffect(() => {
-    getAudio();
+    getAudio(0);
   }, []);
 
-  const getAudio = () => {
+  const getAudio = (page: number) => {
     //fetch  - взять данные с сервера
+    setPageCount(1);
 
-    setAudio([
-      {
+    const audios = [];
+    for (let index = 0; index < 5; index++) {
+      audios.push({
         id: "1",
         date: "12.30.2022",
         name: "audio1 so long name for this field",
@@ -37,8 +43,10 @@ const Profile: NextPage = () => {
         cost: "500",
         ready: false,
         detecting: false,
-      },
-    ]);
+      });
+    }
+
+    setAudio(audios);
   };
 
   const readFiles = (e: ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +134,15 @@ const Profile: NextPage = () => {
     setAudio(newAudio);
   };
 
+  const handlePageClick = (event: any) => {
+    const newPage = (event.selected * itemsPerPage) % audio.length;
+    console.log(
+      `User requested page number ${event.selected}, which is page ${newPage}`
+    );
+
+    // getAudio(newPage);
+  };
+
   if (audio.length) {
     audioList = (
       <table className={cn("audio-list__table")}>
@@ -204,9 +221,9 @@ const Profile: NextPage = () => {
             "file-uploader__btn_disabled": isUpload,
           })}
         >
-          <span className={cn("icon_wrapper")}>
+          <span className={cn("icon-wrapper")}>
             <Image
-              className={cn("icon_wrapper__icon", {
+              className={cn("icon-wrapper__icon", {
                 icon_wrapper__icon_spin: isUpload,
               })}
               src={isUpload ? "/icons/loading.png" : "/icons/upload.png"}
@@ -224,6 +241,22 @@ const Profile: NextPage = () => {
         </label>
       </div>
       <div className={cn("audio-list")}>{audioList}</div>
+      {pageCount > 1 && (
+        <div className={cn("pagination-wrapper")}>
+          <ReactPaginate
+            className={cn("pagination")}
+            pageClassName={cn("page")}
+            previousClassName={cn("page", "previous")}
+            nextClassName={cn("page", "next")}
+            breakLabel="..."
+            nextLabel=">"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel="<"
+          />
+        </div>
+      )}
     </>
   );
 };
