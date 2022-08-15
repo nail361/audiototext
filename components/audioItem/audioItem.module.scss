@@ -1,0 +1,44 @@
+@import "../../styles/variables.scss";
+
+.audio-list {
+  &__edit,
+  &__delete,
+  &__detect {
+    background-repeat: no-repeat;
+    width: 30px;
+    height: 30px;
+    background-size: 30px;
+    display: inline-block;
+    cursor: pointer;
+
+    &_hide {
+      display: none;
+    }
+  }
+
+  &__detect {
+    display: flex;
+    align-items: center;
+    background-image: url("/icons/audio/detect.png");
+    background-position-x: right;
+    background-position-y: center;
+    text-align: left;
+    width: 80px;
+    margin-left: 15px;
+    font-weight: 500;
+    background-color: $main-color;
+    border-radius: 5px;
+    padding: 5px 5px;
+    color: white;
+    height: 40px;
+  }
+
+  &__edit {
+    background-image: url("/icons/audio/edit.png");
+  }
+
+  &__delete {
+    margin-left: 10px;
+    background-image: url("/icons/audio/delete.png");
+  }
+}

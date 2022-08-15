@@ -3,23 +3,28 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Image from "next/image";
-
-import classNames from "classnames/bind";
-import styles from "./profile.module.scss";
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import Audio from "../../models/audio";
 import Prompt from "../../components/prompt";
 import ReactPaginate from "react-paginate";
+import AudioItem from "../../components/audioItem";
+
+import classNames from "classnames/bind";
+import styles from "./profile.module.scss";
 
 const cn = classNames.bind(styles);
 
 const itemsPerPage = 10;
 
+type AudioList = Audio & {
+  detecting: boolean;
+};
+
 const Profile: NextPage = () => {
   const { t } = useTranslation(["profile", "common"]);
   const router = useRouter();
   const [filesCount, setFilesCount] = useState(0);
-  const [audio, setAudio] = useState<Audio[]>([]);
+  const [audio, setAudio] = useState<AudioList[]>([]);
   const [isUpload, setUpload] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
@@ -34,14 +39,14 @@ const Profile: NextPage = () => {
     setPageCount(1);
 
     const audios = [];
-    for (let index = 0; index < 5; index++) {
+    for (let index = 0; index < 6; index++) {
       audios.push({
-        id: "1",
+        id: index.toString(),
         date: "12.30.2022",
-        name: "audio1 so long name for this field",
+        name: `audio${index} so long name for this field`,
         duration: "01:33",
         cost: "500",
-        ready: false,
+        ready: !!(index % 2),
         detecting: false,
       });
     }
@@ -157,43 +162,14 @@ const Profile: NextPage = () => {
         </thead>
         <tbody>
           {audio.map((audio) => (
-            <tr key={audio.id}>
-              <td>{audio.date}</td>
-              <td>{audio.name}</td>
-              <td>{audio.duration}</td>
-              <td>
-                {audio.detecting && <span>loading</span>}
-                {!audio.ready && !audio.detecting && (
-                  <>
-                    <select>
-                      <option value="ru">{t("language.ru")}</option>
-                      <option value="en">{t("language.en")}</option>
-                    </select>
-                    <div
-                      title={`${t("detect")} ${audio.cost}руб.`}
-                      className={cn("audio-list__detect")}
-                      onClick={() => detectAudio(audio.id)}
-                    >
-                      {audio.cost}
-                    </div>
-                  </>
-                )}
-                <div
-                  title={t("edit")}
-                  className={cn("audio-list__edit", {
-                    "audio-list__edit_hide": !audio.ready,
-                  })}
-                  onClick={() => editAudio(audio.id)}
-                ></div>
-                <div
-                  title={t("delete")}
-                  className={cn("audio-list__delete", {
-                    "audio-list__delete_hide": audio.detecting,
-                  })}
-                  onClick={() => deleteAudioPrompt(audio.id)}
-                ></div>
-              </td>
-            </tr>
+            <AudioItem
+              key={audio.id}
+              {...audio}
+              onDeleteAudio={deleteAudioPrompt}
+              onEditAudio={editAudio}
+              onDetectAudio={detectAudio}
+              t={t}
+            />
           ))}
         </tbody>
       </table>

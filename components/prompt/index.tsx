@@ -14,6 +14,8 @@ type PromptType = {
 };
 
 function Prompt(props: PromptType & WithTranslation) {
+  const { t } = props;
+
   return (
     <>
       <div className={cn("card", "prompt-window")}>
@@ -29,14 +31,14 @@ function Prompt(props: PromptType & WithTranslation) {
               className={cn("btn", "footer__deny-btn")}
               onClick={props.onDeny}
             >
-              {props.t("prompt.deny", { ns: "common" })}
+              {t("prompt.deny", { ns: "common" })}
             </button>
           )}
           <button
             className={cn("btn", "footer__accept-btn")}
             onClick={props.onAccept}
           >
-            {props.t("prompt.accept", { ns: "common" })}
+            {t("prompt.accept", { ns: "common" })}
           </button>
         </div>
       </div>

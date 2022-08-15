@@ -5,5 +5,4 @@ export default interface Audio {
   duration: string;
   cost: string;
   ready: boolean;
-  detecting: boolean;
 }
