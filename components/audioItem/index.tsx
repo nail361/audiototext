@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Audio from "../../models/audio";
 
 import classNames from "classnames/bind";
@@ -17,13 +17,40 @@ type AudioList = {
 
 function AudioItem(props: Audio & AudioList & WithTranslation) {
   const { t } = props;
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const onPlayBtnHandler = () => {
+    if (audioRef.current == null) return;
+
+    if (playing) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    } else {
+      audioRef.current.play();
+    }
+
+    setPlaying((prevState) => !prevState);
+  };
 
   return (
-    <tr>
-      <td>{props.date}</td>
-      <td>{props.name}</td>
-      <td>{props.duration}</td>
-      <td>
+    <div className={cn("row")}>
+      <div
+        className={cn("row__play-btn", {
+          "row__play-btn_playing": playing,
+        })}
+        onClick={onPlayBtnHandler}
+      />
+      <audio
+        ref={audioRef}
+        preload="none"
+        className={cn("row__audio")}
+        src={props.src}
+      />
+      <div className={cn("row__cell")}>{props.date}</div>
+      <div className={cn("row__cell")}>{props.name}</div>
+      <div className={cn("row__cell")}>{props.duration}</div>
+      <div className={cn("row__cell")}>
         {props.detecting && <span>loading</span>}
         {!props.ready && !props.detecting && (
           <>
@@ -32,8 +59,8 @@ function AudioItem(props: Audio & AudioList & WithTranslation) {
               <option value="en">{t("language.en")}</option>
             </select>
             <div
-              title={`${t("detect")} ${props.cost}руб.`}
-              className={cn("audio-list__detect")}
+              title={`${t("table.detect")} ${props.cost}руб.`}
+              className={cn("row__detect")}
               onClick={() => props.onDetectAudio(props.id)}
             >
               {props.cost}
@@ -41,21 +68,21 @@ function AudioItem(props: Audio & AudioList & WithTranslation) {
           </>
         )}
         <div
-          title={t("edit")}
-          className={cn("audio-list__edit", {
-            "audio-list__edit_hide": !props.ready,
+          title={t("table.edit")}
+          className={cn("row__edit", {
+            row__edit_hide: !props.ready,
           })}
           onClick={() => props.onEditAudio(props.id)}
         ></div>
         <div
-          title={t("delete")}
-          className={cn("audio-list__delete", {
-            "audio-list__delete_hide": props.detecting,
+          title={t("table.delete")}
+          className={cn("row__delete", {
+            row__delete_hide: props.detecting,
           })}
           onClick={() => props.onDeleteAudio(props.id)}
         ></div>
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
 

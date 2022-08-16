@@ -1,16 +1,69 @@
 @import "../../styles/variables.scss";
 
-.audio-list {
+.row {
+  border-radius: 5px;
+  box-shadow: 0px 2px 2px 1px rgba(34, 60, 80, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  width: 100%;
+
+  &__cell {
+    padding: 10px;
+    width: 150px;
+    height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &:not(:last-child) {
+      border-right: 1px solid lightgray;
+    }
+
+    &:last-child {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      flex: 1;
+    }
+  }
+
+  &__audio {
+    display: none;
+  }
+
+  &__play-btn {
+    cursor: pointer;
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    background-color: $main-color;
+    border-radius: 50%;
+    top: 50%;
+    left: -40px;
+    transform: translateY(-50%);
+    background-size: 20px;
+    background-position-y: center;
+    background-position-x: 60%;
+
+    background-repeat: no-repeat;
+    background-image: url("/icons/audio/play.png");
+
+    &_playing {
+      background-image: url("/icons/audio/pause.png");
+      background-position-x: 50%;
+    }
+  }
+
   &__edit,
   &__delete,
   &__detect {
     background-repeat: no-repeat;
-    width: 30px;
-    height: 30px;
-    background-size: 30px;
     display: inline-block;
     cursor: pointer;
-
+    height: 40px;
     &_hide {
       display: none;
     }
@@ -20,8 +73,9 @@
     display: flex;
     align-items: center;
     background-image: url("/icons/audio/detect.png");
-    background-position-x: right;
+    background-position-x: 90%;
     background-position-y: center;
+    background-size: 30px;
     text-align: left;
     width: 80px;
     margin-left: 15px;
@@ -30,7 +84,15 @@
     border-radius: 5px;
     padding: 5px 5px;
     color: white;
-    height: 40px;
+  }
+
+  &__delete,
+  &__edit {
+    background-color: $main-color;
+    width: 40px;
+    border-radius: 50%;
+    background-size: 25px;
+    background-position: center;
   }
 
   &__edit {

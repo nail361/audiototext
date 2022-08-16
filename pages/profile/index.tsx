@@ -44,6 +44,7 @@ const Profile: NextPage = () => {
     for (let index = 0; index < 6; index++) {
       audios.push({
         id: index.toString(),
+        src: "https://cdn.drivemusic.me/dl/online/SJdIvsBU7UHNBqDUeHd9BQ/1660688637/download_music/2014/05/nico-vinz-am-i-wrong.mp3",
         date: "12.30.2022",
         name: `audio${index} so long name for this field`,
         duration: "01:33",
@@ -152,17 +153,16 @@ const Profile: NextPage = () => {
 
   if (audio.length) {
     audioList = (
-      <table className={cn("audio-list__table")}>
-        <caption>{t("table.caption")}</caption>
-        <thead>
-          <tr>
-            <td>{t("table.date")}</td>
-            <td>{t("table.name")}</td>
-            <td>{t("table.duration")}</td>
-            <td></td>
-          </tr>
-        </thead>
-        <tbody>
+      <>
+        <div className={cn("caption")}>
+          <h3>{t("table.caption")}</h3>
+        </div>
+        <div className={cn("head")}>
+          <div>{t("table.date")}</div>
+          <div>{t("table.name")}</div>
+          <div>{t("table.duration")}</div>
+        </div>
+        <div className={cn("body")}>
           {audio.map((audio) => (
             <AudioItem
               key={audio.id}
@@ -173,8 +173,8 @@ const Profile: NextPage = () => {
               t={t}
             />
           ))}
-        </tbody>
-      </table>
+        </div>
+      </>
     );
   } else {
     audioList = <span>{t("no_audio")}</span>;
