@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Audio from "../../models/audio";
 
 import classNames from "classnames/bind";
@@ -8,26 +8,38 @@ import { WithTranslation } from "next-i18next";
 
 const cn = classNames.bind(styles);
 
-type AudioList = {
+type AudioListType = {
   onDetectAudio: (id: string) => void;
   onEditAudio: (id: string) => void;
   onDeleteAudio: (id: string) => void;
   detecting: false;
 };
 
-function AudioItem(props: Audio & AudioList & WithTranslation) {
+function AudioItem(props: Audio & AudioListType & WithTranslation) {
   const { t } = props;
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const onPlayBtnHandler = () => {
+  useEffect(() => {
+    if (audioRef.current) {
+      const audio = audioRef.current;
+      audio.addEventListener("ended", onAudioEnded);
+      return () => audio.removeEventListener("ended", onAudioEnded);
+    }
+  }, [audioRef]);
+
+  const onAudioEnded = () => {
+    setPlaying(false);
+  };
+
+  const onPlayClickHandler = () => {
     if (audioRef.current == null) return;
 
-    if (playing) {
+    if (audioRef.current.paused) {
+      audioRef.current.play();
+    } else {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-    } else {
-      audioRef.current.play();
     }
 
     setPlaying((prevState) => !prevState);
@@ -39,7 +51,7 @@ function AudioItem(props: Audio & AudioList & WithTranslation) {
         className={cn("row__play-btn", {
           "row__play-btn_playing": playing,
         })}
-        onClick={onPlayBtnHandler}
+        onClick={onPlayClickHandler}
       />
       <audio
         ref={audioRef}

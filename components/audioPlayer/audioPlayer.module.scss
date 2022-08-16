@@ -1,0 +1,145 @@
+@import "../../styles/variables.scss";
+
+.audio-player {
+  height: 50px;
+  width: 450px;
+  background: $main-color;
+  box-shadow: 0 2px 5px 1px rgba(0, 0, 0, 0.3);
+  font-family: arial;
+  color: white;
+  font-size: 1em;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 6px auto;
+
+  &__audio {
+    display: block;
+  }
+
+  &__timeline {
+    background: white;
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 2px 5px 0 #0006;
+  }
+
+  &__progress {
+    background: coral;
+    width: 0%;
+    height: 100%;
+    transition: 0.25s;
+  }
+
+  &__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 0 20px;
+
+    & > * {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &__toggle-play {
+    &_play {
+      cursor: pointer;
+      position: relative;
+      left: 0;
+      height: 0;
+      width: 0;
+      border: 7px solid #0000;
+      border-left: 13px solid white;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+
+    &_pause {
+      height: 15px;
+      width: 20px;
+      cursor: pointer;
+      position: relative;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &::before {
+        position: absolute;
+        top: 0;
+        left: 0px;
+        background: white;
+        content: "";
+        height: 15px;
+        width: 3px;
+      }
+
+      &::after {
+        position: absolute;
+        top: 0;
+        right: 8px;
+        background: white;
+        content: "";
+        height: 15px;
+        width: 3px;
+      }
+    }
+  }
+
+  &-time {
+    display: flex;
+
+    & > * {
+      padding: 2px;
+    }
+  }
+
+  &-volume-container {
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__volume-button {
+    height: 26px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__volume {
+    width: 25px;
+    height: 25px;
+
+    &_medium {
+      background-color: black;
+    }
+  }
+
+  &__volume-slider {
+    position: absolute;
+    top: 15px;
+    left: -3px;
+    z-index: -1;
+    width: 0;
+    height: 15px;
+    background: white;
+    box-shadow: 0 0 20px #000a;
+    transition: 0.25s;
+
+    &:hover {
+      left: -123px;
+      width: 120px;
+    }
+  }
+
+  &__volume-percentage {
+    background: coral;
+    height: 100%;
+    width: 75%;
+  }
+}

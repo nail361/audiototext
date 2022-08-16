@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Audio from "../../models/audio";
+import AudioPlayer from "../../components/audioPlayer";
 
 import classNames from "classnames/bind";
 import styles from "./edit.module.scss";
@@ -30,8 +31,22 @@ const Edit: NextPage = () => {
     getAudio();
   }, []);
 
+  const textSpans = [];
+
+  if (audio) {
+    for (let index = 0; index < audio.textData.length; index++) {
+      const span = (
+        <span key={audio.textData[index].id} className={cn("text")}>
+          {audio?.textData[index].text}
+        </span>
+      );
+
+      textSpans.push(span);
+    }
+  }
+
   const getAudio = () => {
-    //fetch --получить аудио с сервака
+    //fetch id --получить аудио с сервака
 
     setAudio({
       id: "1",
@@ -58,15 +73,13 @@ const Edit: NextPage = () => {
   return (
     <div className={cn("wrapper")}>
       <div className={cn("audio-block")}>
-        <div className={cn("audio-block__audio-player")}></div>
-        <audio
-          preload="auto"
-          className={cn("audio-block__audio")}
-          src={audio.src}
-          controls
-        ></audio>
+        <AudioPlayer
+          audioSrc={audio.src}
+          duration={audio.duration}
+          name={audio.name}
+        />
       </div>
-      <div className={cn("text-block")}></div>
+      <div className={cn("text-block")}>{textSpans}</div>
     </div>
   );
 };
