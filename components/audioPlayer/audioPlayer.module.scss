@@ -25,7 +25,7 @@
   }
 
   &__progress {
-    background: coral;
+    background: $light-color;
     width: 0%;
     height: 100%;
     transition: 0.25s;
@@ -103,6 +103,13 @@
     cursor: pointer;
     position: relative;
     z-index: 2;
+
+    &:hover {
+      .audio-player__volume-slider {
+        left: -123px;
+        width: 120px;
+      }
+    }
   }
 
   &__volume-button {
@@ -114,9 +121,11 @@
   &__volume {
     width: 25px;
     height: 25px;
+    background-repeat: no-repeat;
+    background-image: url("/icons/player/volume.png");
 
-    &_medium {
-      background-color: black;
+    &_mute {
+      background-image: url("/icons/player/volume-mute.png");
     }
   }
 
@@ -128,17 +137,12 @@
     width: 0;
     height: 15px;
     background: white;
-    box-shadow: 0 0 20px #000a;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     transition: 0.25s;
-
-    &:hover {
-      left: -123px;
-      width: 120px;
-    }
   }
 
   &__volume-percentage {
-    background: coral;
+    background: $light-color;
     height: 100%;
     width: 75%;
   }

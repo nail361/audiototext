@@ -15,6 +15,7 @@ function AudioPlayer(props: AudioElementType) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [curTime, setCurTime] = useState<number>(0);
+  const [volume, setVolume] = useState<number>(100);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -48,6 +49,38 @@ function AudioPlayer(props: AudioElementType) {
     setPlaying((prevState) => !prevState);
   };
 
+  const onTimeLineClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current) return;
+
+    const timelineWidth = event.currentTarget.offsetWidth;
+    const timeToSeek =
+      (event.nativeEvent.offsetX / timelineWidth) * audioRef.current.duration;
+
+    audioRef.current.currentTime = timeToSeek;
+    setCurTime(timeToSeek);
+  };
+
+  const onVolumeClick = () => {
+    if (!audioRef.current) return;
+
+    if (volume > 0) {
+      setVolume(0);
+      audioRef.current.volume = 0;
+    } else {
+      setVolume(50);
+      audioRef.current.volume = 1;
+    }
+  };
+
+  const onChangeVolume = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current) return;
+
+    const sliderWidth = event.currentTarget.offsetWidth;
+    const newVolume = event.nativeEvent.offsetX / sliderWidth;
+    audioRef.current.volume = newVolume;
+    setVolume(newVolume * 100);
+  };
+
   const progressBarWidth = (currentTime: number): string => {
     if (!audioRef.current) return "";
     return (currentTime / audioRef.current.duration) * 100 + "%";
@@ -60,8 +93,8 @@ function AudioPlayer(props: AudioElementType) {
     const hours: number = Math.floor(minutes / 60);
     minutes -= hours * 60;
 
-    if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
-    return `${hours.toFixed(2)}:${minutes}:${(seconds % 60).toFixed(2)}`;
+    if (hours === 0) return `${minutes}:${(seconds % 60).toFixed(0)}`;
+    return `${hours.toFixed(0)}:${minutes}:${(seconds % 60).toFixed(0)}`;
   };
 
   return (
@@ -72,7 +105,7 @@ function AudioPlayer(props: AudioElementType) {
         className={cn("audio-player__audio")}
         src={props.audioSrc}
       ></audio>
-      <div className={cn("audio-player__timeline")}>
+      <div className={cn("audio-player__timeline")} onClick={onTimeLineClick}>
         <div
           className={cn("audio-player__progress")}
           style={{ width: progressBarWidth(curTime) }}
@@ -97,16 +130,25 @@ function AudioPlayer(props: AudioElementType) {
         </div>
         <div className={cn("audio-player__name")}>{props.name}</div>
         <div className={cn("audio-player-volume-container")}>
-          <div className={cn("audio-player__volume-button")}>
+          <div
+            className={cn("audio-player__volume-button")}
+            onClick={onVolumeClick}
+          >
             <div
               className={cn("audio-player__volume", {
-                "audio-player__volume_medium": true,
+                "audio-player__volume_mute": volume == 0,
               })}
             />
           </div>
 
-          <div className={cn("audio-player__volume-slider")}>
-            <div className={cn("audio-player__volume-percentage")} />
+          <div
+            className={cn("audio-player__volume-slider")}
+            onClick={onChangeVolume}
+          >
+            <div
+              className={cn("audio-player__volume-percentage")}
+              style={{ width: `${volume}%` }}
+            />
           </div>
         </div>
       </div>
