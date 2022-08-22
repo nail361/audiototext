@@ -1,0 +1,22 @@
+@import "../../styles/variables.scss";
+
+.span-block {
+  font-size: 1.2rem;
+  border: none;
+  height: 25px;
+  text-align: center;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:hover {
+    background-color: $main-color;
+    color: white;
+  }
+
+  &_highlight {
+    background-color: $light-color;
+    color: white;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import classNames from "classnames/bind";
 import styles from "./audioPlayer.module.scss";
@@ -8,14 +8,20 @@ const cn = classNames.bind(styles);
 type AudioElementType = {
   audioSrc: string;
   duration: string;
-  name: string;
+  name?: string;
+  curTime: number;
+  onAudioProgress: (time: number) => void;
 };
 
 function AudioPlayer(props: AudioElementType) {
+  const { curTime, onAudioProgress } = props;
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [curTime, setCurTime] = useState<number>(0);
   const [volume, setVolume] = useState<number>(100);
+
+  const onTimeUpdate = useCallback(() => {
+    onAudioProgress(audioRef.current!.currentTime);
+  }, [onAudioProgress]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -27,14 +33,14 @@ function AudioPlayer(props: AudioElementType) {
         audio.removeEventListener("timeupdate", onTimeUpdate);
       };
     }
-  }, [audioRef]);
+  }, [audioRef, onTimeUpdate]);
+
+  useEffect(() => {
+    audioRef.current!.currentTime = curTime;
+  }, [curTime]);
 
   const onAudioEnded = () => {
     setPlaying(false);
-  };
-
-  const onTimeUpdate = () => {
-    setCurTime(audioRef.current!.currentTime);
   };
 
   const onPlayClickHandler = () => {
@@ -57,7 +63,7 @@ function AudioPlayer(props: AudioElementType) {
       (event.nativeEvent.offsetX / timelineWidth) * audioRef.current.duration;
 
     audioRef.current.currentTime = timeToSeek;
-    setCurTime(timeToSeek);
+    onAudioProgress(timeToSeek);
   };
 
   const onVolumeClick = () => {
@@ -128,7 +134,9 @@ function AudioPlayer(props: AudioElementType) {
           <div className={cn("audio-player-time__divider")}>/</div>
           <div className={cn("audio-player-length")}>{props.duration}</div>
         </div>
-        <div className={cn("audio-player__name")}>{props.name}</div>
+        {props.name && (
+          <div className={cn("audio-player__name")}>{props.name}</div>
+        )}
         <div className={cn("audio-player-volume-container")}>
           <div
             className={cn("audio-player__volume-button")}

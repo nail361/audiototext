@@ -2,9 +2,14 @@ import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactElement, useCallback } from "react";
 import Audio from "../../models/audio";
 import AudioPlayer from "../../components/audioPlayer";
+import TextBlock from "../../components/textBlock";
+import { textData } from "../../types/textData";
+import Prompt from "../../components/prompt";
+
+import DownloadTextFile from "../../utils/downloadTextFile";
 
 import classNames from "classnames/bind";
 import styles from "./edit.module.scss";
@@ -12,19 +17,17 @@ import styles from "./edit.module.scss";
 const cn = classNames.bind(styles);
 
 type AudioEdit = Audio & {
-  textData: [
-    {
-      id: string;
-      text: string;
-      startTime: number;
-    }
-  ];
+  textData: textData[];
 };
 
 const Edit: NextPage = () => {
   const { t } = useTranslation("edit");
   const router = useRouter();
   const [audio, setAudio] = useState<AudioEdit | null>(null);
+  const [curTime, setCurTime] = useState(0);
+  const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
+  const [saving, setSaving] = useState(false);
+  let savingTimeout: NodeJS.Timeout;
   const { id } = router.query;
 
   useEffect(() => {
@@ -33,15 +36,101 @@ const Edit: NextPage = () => {
 
   const textSpans = [];
 
+  const onTextBlockClick = (id: string) => {
+    const textBlock = audio?.textData.find((tb) => tb.id == id);
+
+    if (textBlock) onAudioProgress(textBlock.startTime);
+  };
+
+  const onTextBlockChange = (id: string, text: string) => {
+    if (audio?.textData) {
+      const newTextData: textData[] = audio.textData.map((tb) => {
+        if (tb.id == id) {
+          tb.text = text;
+          return tb;
+        } else return tb;
+      });
+
+      const newAudio = {
+        ...audio,
+        texData: newTextData,
+      };
+
+      setAudio(newAudio);
+      saveChanges();
+    }
+  };
+
+  const dialogRevert = () => {
+    setPromptDialog(
+      <Prompt
+        t={t}
+        title={t("delete_prompt.title")}
+        text={t("delete_prompt.text")}
+        onAccept={() => {
+          revertTextToOriginal();
+          closePromptDialog();
+        }}
+        onDeny={closePromptDialog}
+      />
+    );
+  };
+
+  const closePromptDialog = () => {
+    setPromptDialog(null);
+  };
+
+  const revertTextToOriginal = () => {
+    if (audio?.textData) {
+      const newTextData = audio.textData.map((tb) => {
+        tb.text = tb.originalText;
+        return tb;
+      });
+      const newAudio = {
+        ...audio,
+        texData: newTextData,
+      };
+
+      setAudio(newAudio);
+      saveChanges();
+    }
+  };
+
+  const downloadText = () => {
+    const computedText: string = audio!.textData.reduce(
+      (accumulator, nextValue) => (accumulator += nextValue.text + " "),
+      ""
+    );
+
+    DownloadTextFile(audio!.name, computedText);
+  };
+
+  const saveChanges = () => {
+    setSaving(true);
+
+    clearTimeout(savingTimeout);
+
+    savingTimeout = setTimeout(() => {
+      // send changes to server
+      setSaving(false);
+    }, 1000);
+  };
+
   if (audio) {
     for (let index = 0; index < audio.textData.length; index++) {
-      const span = (
-        <span key={audio.textData[index].id} className={cn("text")}>
-          {audio?.textData[index].text}
-        </span>
+      textSpans.push(
+        <TextBlock
+          key={audio.textData[index].id}
+          id={audio.textData[index].id}
+          text={audio.textData[index].text}
+          originalText={audio.textData[index].originalText}
+          startTime={audio.textData[index].startTime}
+          curTime={curTime}
+          endTime={audio.textData[index].endTime}
+          onClickCallback={onTextBlockClick}
+          onChangeCallback={onTextBlockChange}
+        />
       );
-
-      textSpans.push(span);
     }
   }
 
@@ -52,7 +141,7 @@ const Edit: NextPage = () => {
       id: "1",
       src: "https://cdn.drivemusic.me/dl/online/SJdIvsBU7UHNBqDUeHd9BQ/1660688637/download_music/2014/05/nico-vinz-am-i-wrong.mp3",
       date: "14.02.2022",
-      name: "name",
+      name: "супер длинное имя",
       duration: "1:30",
       cost: "",
       ready: true,
@@ -60,10 +149,30 @@ const Edit: NextPage = () => {
         {
           id: "1",
           text: "привет",
+          originalText: "привет",
           startTime: 0,
+          endTime: 30,
+        },
+        {
+          id: "2",
+          text: "как",
+          originalText: "как",
+          startTime: 30,
+          endTime: 45,
+        },
+        {
+          id: "3",
+          text: "дела",
+          originalText: "дела",
+          startTime: 45,
+          endTime: 56,
         },
       ],
     });
+  };
+
+  const onAudioProgress = (time: number) => {
+    setCurTime(time);
   };
 
   if (!audio) {
@@ -71,16 +180,35 @@ const Edit: NextPage = () => {
   }
 
   return (
-    <div className={cn("wrapper")}>
-      <div className={cn("audio-block")}>
-        <AudioPlayer
-          audioSrc={audio.src}
-          duration={audio.duration}
-          name={audio.name}
-        />
+    <>
+      {promptDialog}
+      <div className={cn("wrapper")}>
+        <div className={cn("audio-block")}>
+          <AudioPlayer
+            audioSrc={audio.src}
+            duration={audio.duration}
+            curTime={curTime}
+            onAudioProgress={onAudioProgress}
+          />
+        </div>
+        <div className={cn("controls-block")}>
+          <div className={cn("save-icon", { "save-icon_hide": !saving })} />
+          <span className={cn("controls-block__name")}>{audio.name}</span>
+          <span>{audio.date}</span>
+          <div
+            className={cn("controls-block__download")}
+            onClick={downloadText}
+            title={t("download")}
+          />
+          <div
+            className={cn("controls-block__revert")}
+            onClick={dialogRevert}
+            title={t("revert")}
+          />
+        </div>
+        <div className={cn("text-block")}>{textSpans}</div>
       </div>
-      <div className={cn("text-block")}>{textSpans}</div>
-    </div>
+    </>
   );
 };
 

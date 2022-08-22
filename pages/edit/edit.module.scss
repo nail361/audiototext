@@ -10,5 +10,71 @@
     &__audio {
       display: none;
     }
+    margin-bottom: 20px;
+  }
+
+  .controls-block {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    align-items: center;
+    font-weight: 500;
+
+    * {
+      margin-left: 15px;
+    }
+
+    &__name {
+      max-width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .save-icon {
+      width: 32px;
+      height: 32px;
+      background-image: url("/icons/edit/save.png");
+
+      animation: blink 1s infinite;
+
+      @keyframes blink {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.1;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      &_hide {
+        visibility: hidden;
+      }
+    }
+
+    &__download,
+    &__revert {
+      cursor: pointer;
+      background-color: $main-color;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      background-size: 32px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    &__download {
+      background-image: url("/icons/edit/download-text.png");
+    }
+
+    &__revert {
+      background-position-x: 40%;
+      background-image: url("/icons/edit/revert-btn.png");
+    }
   }
 }
