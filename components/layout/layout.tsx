@@ -24,7 +24,7 @@ const Layout: FunctionComponent<Props> = (props) => {
   }, [i18n]);
 
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
-  const [protectedPage, setProtectedPage] = useState(false);
+  const [protectedPage, setProtectedPage] = useState(true);
   const router = useRouter();
 
   useEffect(() => {

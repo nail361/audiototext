@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import Audio from "../../models/audio";
+import Loader from "../loader";
 
 import classNames from "classnames/bind";
 import styles from "./audioItem.module.scss";
@@ -12,7 +13,7 @@ type AudioListType = {
   onDetectAudio: (id: string) => void;
   onEditAudio: (id: string) => void;
   onDeleteAudio: (id: string) => void;
-  detecting: false;
+  detecting: boolean;
 };
 
 function AudioItem(props: Audio & AudioListType & WithTranslation) {
@@ -62,8 +63,8 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
       <div className={cn("row__cell")}>{props.date}</div>
       <div className={cn("row__cell")}>{props.name}</div>
       <div className={cn("row__cell")}>{props.duration}</div>
-      <div className={cn("row__cell")}>
-        {props.detecting && <span>loading</span>}
+      <div className={cn("row__cell")} style={{ position: "relative" }}>
+        {props.detecting && <Loader overlay={false} top={"-20%"} />}
         {!props.ready && !props.detecting && (
           <>
             <select>

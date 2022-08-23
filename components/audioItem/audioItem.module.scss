@@ -9,6 +9,11 @@
   margin-bottom: 10px;
   width: 100%;
 
+  @media screen and (max-width: 980px) {
+    width: 80%;
+    margin: 0 auto;
+  }
+
   &__cell {
     padding: 10px;
     width: 150px;
@@ -16,6 +21,12 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+
+    @media screen and (max-width: 980px) {
+      &:not(:last-child) {
+        display: none;
+      }
+    }
 
     &:not(:last-child) {
       border-right: 1px solid lightgray;

@@ -1,13 +1,40 @@
 import "../styles/globals.scss";
 import "../styles/reset.css";
 import type { AppProps } from "next/app";
-import { Suspense } from "react";
+import { useRouter } from "next/router";
+import { Suspense, useEffect, useState } from "react";
 import Head from "next/head";
 import Layout from "../components/layout/layout";
 import { appWithTranslation } from "next-i18next";
 import nextI18nConfig from "../next-i18next.config";
 import store from "../store";
 import { Provider } from "react-redux";
+import Loader from "../components/loader";
+
+function Loading() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const handleStart = (url: string) =>
+      url !== router.asPath && setLoading(true);
+    const handleComplete = (url: string) =>
+      url === router.asPath && setLoading(false);
+
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleComplete);
+    router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleComplete);
+      router.events.off("routeChangeError", handleComplete);
+    };
+  });
+
+  if (loading) return <Loader height="100px" top={"40%"} />;
+  else return null;
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -17,6 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <Suspense fallback="loading">
         <Layout>
+          <Loading />
           <Component {...pageProps} />
         </Layout>
       </Suspense>

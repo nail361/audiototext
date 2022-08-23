@@ -194,7 +194,7 @@ const Edit: NextPage = () => {
         <div className={cn("controls-block")}>
           <div className={cn("save-icon", { "save-icon_hide": !saving })} />
           <span className={cn("controls-block__name")}>{audio.name}</span>
-          <span>{audio.date}</span>
+          <span className={cn("controls-block__date")}>{audio.date}</span>
           <div
             className={cn("controls-block__download")}
             onClick={downloadText}

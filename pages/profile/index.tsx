@@ -8,6 +8,7 @@ import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import Audio from "../../models/audio";
 import Prompt from "../../components/prompt";
 import AudioItem from "../../components/audioItem";
+import Loader from "../../components/loader";
 
 import classNames from "classnames/bind";
 import styles from "./profile.module.scss";
@@ -28,6 +29,7 @@ const Profile: NextPage = () => {
   const [filesCount, setFilesCount] = useState(0);
   const [audio, setAudio] = useState<AudioList[]>([]);
   const [isUpload, setUpload] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   let audioList = null;
@@ -37,6 +39,7 @@ const Profile: NextPage = () => {
   }, []);
 
   const getAudio = (page: number) => {
+    setLoading(true);
     //fetch  - взять данные с сервера
     setPageCount(1);
 
@@ -55,6 +58,8 @@ const Profile: NextPage = () => {
     }
 
     setAudio(audios);
+
+    setLoading(false);
   };
 
   const readFiles = (e: ChangeEvent<HTMLInputElement>) => {
@@ -218,7 +223,10 @@ const Profile: NextPage = () => {
           </span>
         </label>
       </div>
-      <div className={cn("audio-list")}>{audioList}</div>
+      <div className={cn("audio-list")}>
+        {loading && <Loader height="100px" />}
+        {audioList}
+      </div>
       {pageCount > 1 && (
         <div className={cn("pagination-wrapper")}>
           <Paginator pageCount={pageCount} handlePageClick={handlePageClick} />
