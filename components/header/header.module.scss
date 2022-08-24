@@ -3,8 +3,27 @@
 .header {
   width: 100%;
   height: $header-height;
-  background-color: $main-color;
   z-index: 3;
+
+  @media (max-width: 899px) {
+    height: $header-mobile;
+    padding-top: 8px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $main-color;
+    z-index: 2;
+
+    @media (max-width: 899px) {
+      z-index: 3;
+    }
+  }
 
   position: fixed;
   top: 0;
@@ -12,50 +31,145 @@
 
   color: white;
   padding: 10px;
+  padding-top: 16px;
 
   &-row {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     max-width: 960px;
     margin: 0 auto;
 
     &__logo {
       width: 35%;
+      z-index: 3;
     }
   }
 
-  &-nav {
+  &__nav {
     width: 65%;
     text-align: right;
+    z-index: 2;
 
-    &__link {
+    @media (max-width: 899px) {
+      position: fixed;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: $light-color;
+      padding-top: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: 10px;
+      font-size: 2rem;
+      transition: all 0.3s ease;
+
+      &_active {
+        top: 0;
+      }
+    }
+  }
+
+  &__burger {
+    display: none;
+
+    @media (max-width: 899px) {
+      display: block;
+      position: relative;
       cursor: pointer;
-      margin-right: 1.5rem;
+      width: 30px;
+      height: 25px;
+      z-index: 3;
 
-      &_wallet {
-        position: relative;
-        margin-right: 3rem;
-
-        &::after {
-          content: "";
-          position: absolute;
-          top: -8px;
-          right: -35px;
-          background-image: url("/icons/wallet.png");
-          background-repeat: no-repeat;
-          display: block;
-          width: 32px;
-          height: 32px;
-        }
+      &::before,
+      &::after {
+        content: "";
+        background-color: white;
+        position: absolute;
+        width: 100%;
+        height: 3px;
+        left: 0;
+        transition: all 0.3s ease;
       }
 
-      &_logout {
-        margin-left: 2rem;
+      &::before {
+        top: 0;
+      }
+
+      &::after {
+        bottom: 0;
+      }
+
+      & span {
+        position: absolute;
+        background-color: white;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        top: 11px;
+        transition: all 0.3s ease;
       }
 
       &_active {
-        text-decoration: underline;
+        &::before {
+          transform: rotate(45deg);
+          top: 11px;
+        }
+        &::after {
+          transform: rotate(-45deg);
+          bottom: 11px;
+        }
+        & span {
+          transform: scale(0);
+        }
       }
+    }
+  }
+
+  &__link {
+    cursor: pointer;
+    margin-right: 1.5rem;
+
+    @media (max-width: 899px) {
+      display: inline-block;
+      height: 60px;
+    }
+
+    &_wallet {
+      position: relative;
+      margin-right: 3rem;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: -8px;
+        right: -35px;
+        background-image: url("/icons/wallet.png");
+        background-repeat: no-repeat;
+        display: block;
+        width: 32px;
+        height: 32px;
+      }
+
+      @media (max-width: 899px) {
+        &::after {
+          top: 6px;
+        }
+      }
+    }
+
+    &_logout {
+      margin-left: 2rem;
+
+      @media (max-width: 899px) {
+        margin-left: 0;
+      }
+    }
+
+    &_active {
+      text-decoration: underline;
     }
   }
 }

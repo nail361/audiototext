@@ -5,7 +5,7 @@
   flex-direction: row;
   color: $main-color;
 
-  @media screen and (max-width: 980px) {
+  @media (max-width: 900px) {
     flex-direction: column-reverse;
   }
 }
@@ -73,7 +73,7 @@
   margin-top: 50px;
   padding: 0 10px;
 
-  @media screen and (max-width: 980px) {
+  @media (max-width: 900px) {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(3, 1fr);
     grid-column-gap: 20px;

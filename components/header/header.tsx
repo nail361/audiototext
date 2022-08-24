@@ -16,6 +16,7 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
   const [showChild, setShowChild] = useState(false); //fix for react 18
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
   const money = useSelector((state: RootState) => state.wallet.money);
+  const [menu, setMenu] = useState(false);
   const dispatch = useDispatch();
   const { t } = props;
 
@@ -23,8 +24,16 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
     setShowChild(true);
   }, []);
 
+  useEffect(() => {
+    setMenu(false);
+  }, [router]);
+
   const logOut = () => {
     dispatch(authActions.logout());
+  };
+
+  const toggleMenu = () => {
+    setMenu((prevState) => !prevState);
   };
 
   if (!showChild) {
@@ -37,12 +46,18 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
     <header className={cn("header")}>
       <div className={cn("header-row")}>
         <div className={cn("header-row__logo")}>Аудиорасшифровщик.рф</div>
-        <nav className={cn("header-nav")}>
+        <div
+          className={cn("header__burger", { header__burger_active: menu })}
+          onClick={toggleMenu}
+        >
+          <span />
+        </div>
+        <nav className={cn("header__nav", { header__nav_active: menu })}>
           <Link href="/">
             <a
               className={cn({
-                "header-nav__link": true,
-                "header-nav__link_active": router.pathname == "/",
+                header__link: true,
+                header__link_active: router.pathname == "/",
               })}
             >
               {t("main")}
@@ -52,8 +67,8 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
             <Link href="/auth">
               <a
                 className={cn({
-                  "header-nav__link": true,
-                  "header-nav__link_active": router.pathname == "/auth",
+                  header__link: true,
+                  header__link_active: router.pathname == "/auth",
                 })}
               >
                 {t("auth")}
@@ -65,8 +80,8 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
               <Link href="/profile">
                 <a
                   className={cn({
-                    "header-nav__link": true,
-                    "header-nav__link_active": router.pathname == "/profile",
+                    header__link: true,
+                    header__link_active: router.pathname == "/profile",
                   })}
                 >
                   {t("profile")}
@@ -75,9 +90,9 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
               <Link href="/wallet">
                 <a
                   className={cn({
-                    "header-nav__link": true,
-                    "header-nav__link_wallet": true,
-                    "header-nav__link_active": router.pathname == "/wallet",
+                    header__link: true,
+                    header__link_wallet: true,
+                    header__link_active: router.pathname == "/wallet",
                   })}
                 >
                   {money} р.
@@ -85,7 +100,7 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
               </Link>
               <a
                 onClick={logOut}
-                className={cn("header-nav__link", "header-nav__link_logout")}
+                className={cn("header__link", "header__link_logout")}
               >
                 {t("logout")}
               </a>
