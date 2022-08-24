@@ -1,18 +1,14 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
-import { RootState } from "../../store";
-import { useSelector } from "react-redux";
 import Header from "../header/header";
 import Footer from "../footer/footer";
 
 import classes from "./layout.module.scss";
+import ProtectedPages from "../../hoc/protectedPages";
 
 type Props = {
   children: React.ReactNode;
 };
-
-const protectedPages = ["/profile", "/wallet", "/edit"];
 
 const Layout: FunctionComponent<Props> = (props) => {
   const { t, i18n } = useTranslation(["common"], {
@@ -23,24 +19,12 @@ const Layout: FunctionComponent<Props> = (props) => {
     if (i18n) i18n.reloadResources(i18n.resolvedLanguage, ["common"]);
   }, [i18n]);
 
-  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
-  const [protectedPage, setProtectedPage] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (protectedPages.includes(router.pathname) && !isAuth) {
-      router.replace("./");
-    } else {
-      setProtectedPage(false);
-    }
-  }, [isAuth, router]);
-
   return (
     <div className={classes.layout}>
       <Header t={t} />
-      {protectedPage ? null : (
+      <ProtectedPages>
         <main className={classes.wrapper}>{props.children}</main>
-      )}
+      </ProtectedPages>
       <Footer t={t} />
     </div>
   );
