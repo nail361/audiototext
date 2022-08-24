@@ -5,6 +5,9 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
+import { RootState } from "../../store";
+import { useSelector, useDispatch } from "react-redux";
+import { walletActions } from "../../store/wallet";
 import Audio from "../../models/audio";
 import Prompt from "../../components/prompt";
 import AudioItem from "../../components/audioItem";
@@ -25,6 +28,8 @@ type AudioList = Audio & {
 
 const Profile: NextPage = () => {
   const { t } = useTranslation(["profile", "common"]);
+  const money = useSelector((state: RootState) => state.wallet.money);
+  const dispatch = useDispatch();
   const router = useRouter();
   const [filesCount, setFilesCount] = useState(0);
   const [audio, setAudio] = useState<AudioList[]>([]);
@@ -51,7 +56,7 @@ const Profile: NextPage = () => {
         date: "12.30.2022",
         name: `audio${index} so long name for this field`,
         duration: "01:33",
-        cost: "500",
+        cost: 500,
         ready: !!(index % 2),
         detecting: false,
       });
@@ -88,14 +93,21 @@ const Profile: NextPage = () => {
     // setUpload(false);
   };
 
-  const detectAudio = (id: string) => {
+  const detectAudio = (id: string, cost: number) => {
+    if (money < cost) {
+      router.push("/wallet");
+      return;
+    }
+
     const newAudio = audio.map((audio) => {
       if (audio.id == id) audio.detecting = true;
       return audio;
     });
     setAudio(newAudio);
 
-    setTimeout(() => detectingReady(id), 1000);
+    //fetch
+
+    setTimeout(() => detectingReady(id, 100), 1000);
   };
 
   const editAudio = (id: string) => {
@@ -126,7 +138,9 @@ const Profile: NextPage = () => {
     setPromptDialog(null);
   };
 
-  const detectingReady = (id: string) => {
+  const detectingReady = (id: string, moneyLeft: number) => {
+    dispatch(walletActions.update(moneyLeft));
+
     const newAudio = audio.map((audio) => {
       if (audio.id == id) {
         audio.detecting = false;

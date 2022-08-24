@@ -4,6 +4,6 @@ export default interface Audio {
   date: string;
   name: string;
   duration: string;
-  cost: string;
+  cost: number;
   ready: boolean;
 }

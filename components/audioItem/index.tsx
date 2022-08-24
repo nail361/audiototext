@@ -10,7 +10,7 @@ import { WithTranslation } from "next-i18next";
 const cn = classNames.bind(styles);
 
 type AudioListType = {
-  onDetectAudio: (id: string) => void;
+  onDetectAudio: (id: string, cost: number) => void;
   onEditAudio: (id: string) => void;
   onDeleteAudio: (id: string) => void;
   detecting: boolean;
@@ -74,7 +74,7 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
             <div
               title={`${t("table.detect")} ${props.cost}руб.`}
               className={cn("row__detect")}
-              onClick={() => props.onDetectAudio(props.id)}
+              onClick={() => props.onDetectAudio(props.id, props.cost)}
             >
               {props.cost}
             </div>

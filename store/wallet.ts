@@ -18,6 +18,9 @@ const slice = createSlice({
     spend(state, action) {
       state.money -= action.payload;
     },
+    update(state, action) {
+      state.money = action.payload;
+    },
   },
 });
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { authActions } from "../../store/auth";
+import { walletActions } from "../../store/wallet";
 
 import classNames from "classnames/bind";
 import styles from "./auth.module.scss";
@@ -48,6 +49,7 @@ const Auth: NextPage = () => {
 
     if (isLogin) {
       dispath(authActions.login("token"));
+      dispath(walletActions.update(100));
       router.push("/profile");
     } else {
       if (!canRegister) return;
