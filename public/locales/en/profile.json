@@ -1,23 +1,7 @@
 {
-  "choose_audio": "Choose audio",
-  "choosen_audio": "Choosen: ",
-  "no_audio": "No audio, upload a new one",
-  "table": {
-    "caption": "Audio list",
-    "date": "Date",
-    "name": "Name",
-    "duration": "Duration",
-    "cost": "Cost",
-    "detect": "Detect for: ",
-    "edit": "Edit",
-    "delete": "Detele"
-  },
-  "language": {
-    "ru": "russian",
-    "en": "english"
-  },
-  "delete_prompt": {
-    "title": "Are you sure to delete?",
-    "text": "This audio will be remove forever"
-  }
+  "email": "change email",
+  "newPassword": "new password",
+  "newPassOneMoreTime": "new password check",
+  "logout": "Logout",
+  "save": "Save"
 }

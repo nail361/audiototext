@@ -1,8 +1,8 @@
 {
   "main": "Главная",
   "auth": "Вход",
+  "audio": "Аудио",
   "profile": "Профиль",
-  "logout": "Выход",
   "contacts": "Контакты",
   "prompt": {
     "accept": "Ок",

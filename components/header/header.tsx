@@ -2,8 +2,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { RootState } from "../../store";
-import { useSelector, useDispatch } from "react-redux";
-import { authActions } from "../../store/auth";
+import { useSelector } from "react-redux";
 
 import classNames from "classnames/bind";
 import styles from "./header.module.scss";
@@ -17,7 +16,6 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);
   const money = useSelector((state: RootState) => state.wallet.money);
   const [menu, setMenu] = useState(false);
-  const dispatch = useDispatch();
   const { t } = props;
 
   useEffect(() => {
@@ -27,10 +25,6 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
   useEffect(() => {
     setMenu(false);
   }, [router]);
-
-  const logOut = () => {
-    dispatch(authActions.logout());
-  };
 
   const toggleMenu = () => {
     setMenu((prevState) => !prevState);
@@ -53,16 +47,18 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
           <span />
         </div>
         <nav className={cn("header__nav", { header__nav_active: menu })}>
-          <Link href="/">
-            <a
-              className={cn({
-                header__link: true,
-                header__link_active: router.pathname == "/",
-              })}
-            >
-              {t("main")}
-            </a>
-          </Link>
+          {!isAuth && (
+            <Link href="/">
+              <a
+                className={cn({
+                  header__link: true,
+                  header__link_active: router.pathname == "/",
+                })}
+              >
+                {t("main")}
+              </a>
+            </Link>
+          )}
           {!isAuth && (
             <Link href="/auth">
               <a
@@ -77,6 +73,16 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
           )}
           {isAuth && (
             <>
+              <Link href="/audio">
+                <a
+                  className={cn({
+                    header__link: true,
+                    header__link_active: router.pathname == "/audio",
+                  })}
+                >
+                  {t("audio")}
+                </a>
+              </Link>
               <Link href="/profile">
                 <a
                   className={cn({
@@ -98,12 +104,6 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
                   {money} р.
                 </a>
               </Link>
-              <a
-                onClick={logOut}
-                className={cn("header__link", "header__link_logout")}
-              >
-                {t("logout")}
-              </a>
             </>
           )}
         </nav>

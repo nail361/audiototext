@@ -7,7 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const protectedPages = ["/profile", "/wallet", "/edit/[id]"];
+const protectedPages = ["/audio", "/profile", "/wallet", "/edit/[id]"];
 
 function ProtectedPages(props: Props) {
   const isAuth = useSelector((state: RootState) => state.auth.isAuth);

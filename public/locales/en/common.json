@@ -1,8 +1,8 @@
 {
   "main": "Main",
   "auth": "Login",
+  "audio": "Audio",
   "profile": "Profile",
-  "logout": "Logout",
   "contacts": "Contacts",
   "prompt": {
     "accept": "OK",

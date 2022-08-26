@@ -48,7 +48,7 @@ const Auth: NextPage = () => {
     event.preventDefault();
 
     if (isLogin) {
-      dispath(authActions.login("token"));
+      dispath(authActions.login({ token: "token", email: "email@email.ru" }));
       dispath(walletActions.update(100));
       router.push("/profile");
     } else {
