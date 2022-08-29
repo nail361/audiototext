@@ -12,6 +12,7 @@ type Props = {
 
 const Layout: FunctionComponent<Props> = (props) => {
   const { t, i18n } = useTranslation(["common"], {
+    //@ts-ignore
     bindI18n: "languageChanged loaded",
   });
 
@@ -21,10 +22,12 @@ const Layout: FunctionComponent<Props> = (props) => {
 
   return (
     <div className={classes.layout}>
+      {/* @ts-ignore */}
       <Header t={t} />
       <ProtectedPages>
         <main className={classes.wrapper}>{props.children}</main>
       </ProtectedPages>
+      {/* @ts-ignore */}
       <Footer t={t} />
     </div>
   );

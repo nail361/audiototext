@@ -63,6 +63,7 @@ const Edit: NextPage = () => {
 
   const dialogRevert = () => {
     setPromptDialog(
+      //@ts-ignore
       <Prompt
         t={t}
         title={t("delete_prompt.title")}
@@ -143,7 +144,7 @@ const Edit: NextPage = () => {
       date: "14.02.2022",
       name: "супер длинное имя",
       duration: "1:30",
-      cost: "",
+      cost: 100,
       ready: true,
       textData: [
         {

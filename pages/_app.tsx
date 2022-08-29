@@ -51,5 +51,5 @@ function MyApp({ Component, pageProps }: AppProps) {
     </Provider>
   );
 }
-
+//@ts-ignore
 export default appWithTranslation(MyApp, nextI18nConfig);

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import Link from "next/link";
-import type { WithTranslation } from "../../types/withTranslation";
+import type { WithTranslation } from "next-i18next";
 
 import classNames from "classnames/bind";
 import styles from "./footer.module.scss";

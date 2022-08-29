@@ -1,11 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import Audio from "../../models/audio";
 import Loader from "../loader";
+import type { WithTranslation } from "next-i18next";
 
 import classNames from "classnames/bind";
 import styles from "./audioItem.module.scss";
-
-import { WithTranslation } from "next-i18next";
 
 const cn = classNames.bind(styles);
 

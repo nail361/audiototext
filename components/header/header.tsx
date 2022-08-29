@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 import classNames from "classnames/bind";
 import styles from "./header.module.scss";
-import type { WithTranslation } from "../../types/withTranslation";
+import type { WithTranslation } from "next-i18next";
 
 const cn = classNames.bind(styles);
 

@@ -121,6 +121,7 @@ const Audio: NextPage = () => {
 
   const deleteAudioPrompt = (id: string) => {
     setPromptDialog(
+      //@ts-ignore
       <Prompt
         t={t}
         title={t("delete_prompt.title")}
@@ -183,6 +184,7 @@ const Audio: NextPage = () => {
         </div>
         <div className={cn("body")}>
           {audio.map((audio) => (
+            //@ts-ignore
             <AudioItem
               key={audio.id}
               {...audio}

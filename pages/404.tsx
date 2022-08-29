@@ -1,8 +1,9 @@
 import { FunctionComponent, useEffect } from "react";
 import { useRouter } from "next/router";
 import { withTranslation } from "next-i18next";
+import type { WithTranslation } from "next-i18next";
 
-const Custom404: FunctionComponent = ({ t }) => {
+const Custom404: FunctionComponent<WithTranslation> = ({ t }) => {
   const router = useRouter();
 
   useEffect(() => {

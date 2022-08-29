@@ -1,5 +1,5 @@
 import React from "react";
-import type { WithTranslation } from "../../types/withTranslation";
+import type { WithTranslation } from "next-i18next";
 
 import classNames from "classnames/bind";
 import styles from "./prompt.module.scss";
