@@ -257,7 +257,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["profile", "common"])),
+      ...(await serverSideTranslations(locale, ["audio", "common"])),
     },
     revalidate: 10,
   };
