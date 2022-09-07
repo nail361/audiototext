@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import type { NextPage, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -12,6 +12,7 @@ import Audio from "../../models/audio";
 import Prompt from "../../components/prompt";
 import AudioItem from "../../components/audioItem";
 import Loader from "../../components/loader";
+import useAPI from "../../hooks/use-api";
 
 import classNames from "classnames/bind";
 import styles from "./audio.module.scss";
@@ -29,43 +30,62 @@ type AudioList = Audio & {
 const Audio: NextPage = () => {
   const { t } = useTranslation(["audio", "common"]);
   const money = useSelector((state: RootState) => state.wallet.money);
+  const token = useSelector((state: RootState) => state.auth.token);
   const dispatch = useDispatch();
   const router = useRouter();
   const [filesCount, setFilesCount] = useState(0);
   const [audio, setAudio] = useState<AudioList[]>([]);
-  const [isUpload, setUpload] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [pageCount, setPageCount] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   let audioList = null;
 
-  useEffect(() => {
-    getAudio(0);
-  }, []);
+  const onAudioListSuccess = (data: {
+    totalPages: number;
+    data: [
+      {
+        id: string;
+        src: string;
+        date: string;
+        name: string;
+        duration: string;
+        cost: number;
+        ready: boolean;
+      }
+    ];
+  }) => {
+    setPageCount(data.totalPages);
 
-  const getAudio = (page: number) => {
-    setLoading(true);
-    //fetch  - взять данные с сервера
-    setPageCount(1);
+    const audio = data.data.map((audioItem) => {
+      return { ...audioItem, detecting: false };
+    });
 
-    const audios = [];
-    for (let index = 0; index < 6; index++) {
-      audios.push({
-        id: index.toString(),
-        src: "https://cdn.drivemusic.me/dl/online/SJdIvsBU7UHNBqDUeHd9BQ/1660688637/download_music/2014/05/nico-vinz-am-i-wrong.mp3",
-        date: "12.30.2022",
-        name: `audio${index} so long name for this field`,
-        duration: "01:33",
-        cost: 500,
-        ready: !!(index % 2),
-        detecting: false,
-      });
-    }
-
-    setAudio(audios);
-
-    setLoading(false);
+    setAudio(audio);
   };
+
+  const { isLoading, sendRequest } = useAPI();
+  const { isLoading: isUpload, sendRequest: uploadAudio } = useAPI();
+
+  const getAudio = useCallback(
+    (page: number) => {
+      const formData = new FormData();
+      formData.append("page", page.toString());
+      formData.append("itemsPerPage", itemsPerPage.toString());
+
+      sendRequest(
+        {
+          url: "getAudioList",
+          headers: { Authorization: "Bearer " + token },
+          body: formData,
+        },
+        onAudioListSuccess
+      );
+    },
+    [sendRequest, token]
+  );
+
+  useEffect(() => {
+    getAudio(1);
+  }, [getAudio]);
 
   const readFiles = (e: ChangeEvent<HTMLInputElement>) => {
     if (isUpload) return;
@@ -80,17 +100,38 @@ const Audio: NextPage = () => {
   };
 
   const sendAudioToServer = (files: FileList) => {
-    setUpload(true);
-
     const formData = new FormData();
 
     for (let i = 0; i < files.length; i++) {
-      formData.append("audio[]", files[i]);
+      formData.append("file", files[i]);
     }
 
-    //fetch('', {method: "POST", body: formData});
+    uploadAudio(
+      {
+        url: "uploadAudio",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      },
+      onUploadSuccess
+    );
+  };
 
-    // setUpload(false);
+  const onUploadSuccess = (data: {
+    status: string;
+    totalPages: number;
+    data: [
+      {
+        id: number;
+        src: string;
+        date: string;
+        name: string;
+        duration: string;
+        cost: string;
+        ready: boolean;
+      }
+    ];
+  }) => {
+    setPageCount(data.totalPages);
   };
 
   const detectAudio = (id: string, cost: number) => {
@@ -168,7 +209,7 @@ const Audio: NextPage = () => {
       `User requested page number ${event.selected}, which is page ${newPage}`
     );
 
-    // getAudio(newPage);
+    getAudio(newPage);
   };
 
   if (audio.length) {
@@ -240,7 +281,7 @@ const Audio: NextPage = () => {
         </label>
       </div>
       <div className={cn("audio-list")}>
-        {loading && <Loader height="100px" />}
+        {isLoading && <Loader height="100px" />}
         {audioList}
       </div>
       {pageCount > 1 && (

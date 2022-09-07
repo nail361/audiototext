@@ -1,23 +1,27 @@
 import type { NextPage, GetStaticProps } from "next";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { authActions } from "../../store/auth";
 import { walletActions } from "../../store/wallet";
+import useAPI from "../../hooks/use-api";
+import toast from "react-hot-toast";
 
 import classNames from "classnames/bind";
 import styles from "./auth.module.scss";
 
 const cn = classNames.bind(styles);
 
+const authTypes = { LOGIN: "login", REGISTER: "register" };
+
 const Auth: NextPage = () => {
   const { t } = useTranslation("auth");
   const router = useRouter();
-  const [authType, setAuthType] = useState("login"); //login or register
-  const [canRegister, setCanRegister] = useState(false);
-  const isLogin = authType == "login";
+  const [authType, setAuthType] = useState(authTypes.LOGIN);
+  const [disabledSubmitBtn, setDisabledSubmitBtn] = useState(true);
+  const isLogin = authType == authTypes.LOGIN;
   const dispath = useDispatch();
 
   const name = useRef<HTMLInputElement>(null);
@@ -25,39 +29,89 @@ const Auth: NextPage = () => {
   const pass = useRef<HTMLInputElement>(null);
   const checkbox = useRef<HTMLInputElement>(null);
 
-  const checkRegisterBtn = () => {
-    let flag = true;
+  const { isLoading, sendRequest } = useAPI();
 
-    if (name.current!.value.length < 3) flag = false;
-    if (!email.current!.value.match(/.(.*)+@.(.*)+\..(.*)/)) flag = false;
-    if (pass.current!.value.length < 6) flag = false;
-    if (!checkbox.current!.checked) flag = false;
+  const checkSubmitBtn = useCallback(() => {
+    let flag = false;
 
-    setCanRegister(flag);
-  };
+    if (authType == authTypes.REGISTER) {
+      if (name.current!.value.length < 3) flag = true;
+      if (!checkbox.current!.checked) flag = true;
+    }
+
+    if (!email.current!.value.match(/.(.*)+@.(.*)+\..(.*)/)) flag = true;
+    if (pass.current!.value.length < 6) flag = true;
+    setDisabledSubmitBtn(flag);
+  }, [authType]);
+
+  useEffect(() => {
+    checkSubmitBtn();
+  }, [checkSubmitBtn, authType]);
 
   const goToRegister = () => {
-    setAuthType("register");
+    setAuthType(authTypes.REGISTER);
   };
 
   const goToLogin = () => {
-    setAuthType("login");
+    setAuthType(authTypes.LOGIN);
   };
 
   const sendData = (event: FormEvent) => {
     event.preventDefault();
+    if (disabledSubmitBtn) return;
+
+    const formData = new FormData();
+    formData.append("email", email.current!.value);
+    formData.append("password", pass.current!.value);
 
     if (isLogin) {
-      dispath(authActions.login({ token: "token", email: "email@email.ru" }));
-      dispath(walletActions.update(100));
-      router.push("/profile");
+      sendRequest(
+        {
+          url: "auth",
+          body: formData,
+        },
+        onAuthSuccess,
+        onAuthError
+      );
     } else {
-      if (!canRegister) return;
+      formData.append("name", name.current!.value);
+
+      sendRequest(
+        {
+          url: "register",
+          body: formData,
+        },
+        onRegisterSuccess,
+        onRegisterError
+      );
     }
+  };
 
-    console.log("send data");
+  const onRegisterSuccess = () => {
+    goToLogin();
+    toast.success(t("registerSuccess"), { duration: 5000 });
+  };
 
-    // fetch("");
+  const onRegisterError = (error: { email?: string[] }) => {
+    if (error.email) {
+      toast.error(error.email.join(" "));
+    }
+  };
+
+  const onAuthSuccess = (data: {
+    status: string;
+    token: string;
+    money: number;
+  }) => {
+    dispath(
+      authActions.login({ token: data.token, email: email.current?.value })
+    );
+    dispath(walletActions.update(data.money));
+    router.push("/audio");
+  };
+
+  const onAuthError = (error: string) => {
+    toast.error(error);
   };
 
   return (
@@ -69,12 +123,7 @@ const Auth: NextPage = () => {
         {!isLogin && (
           <div className={cn("form__item")}>
             <label htmlFor="name">{t("name")}:</label>
-            <input
-              id="name"
-              type="text"
-              ref={name}
-              onChange={checkRegisterBtn}
-            />
+            <input id="name" type="text" ref={name} onChange={checkSubmitBtn} />
           </div>
         )}
         <div className={cn("form__item")}>
@@ -83,7 +132,7 @@ const Auth: NextPage = () => {
             id="email"
             type="email"
             ref={email}
-            onChange={checkRegisterBtn}
+            onChange={checkSubmitBtn}
           />
         </div>
         <div className={cn("form__item")}>
@@ -92,7 +141,7 @@ const Auth: NextPage = () => {
             id="password"
             type="password"
             ref={pass}
-            onChange={checkRegisterBtn}
+            onChange={checkSubmitBtn}
           />
         </div>
         {!isLogin && (
@@ -103,7 +152,7 @@ const Auth: NextPage = () => {
               name="rules"
               id="rules"
               ref={checkbox}
-              onChange={checkRegisterBtn}
+              onChange={checkSubmitBtn}
             />
             <span>
               {t("licence.left_part")}
@@ -122,7 +171,7 @@ const Auth: NextPage = () => {
           <button
             type="submit"
             className={cn("btn", {
-              disabled: !(isLogin || canRegister),
+              disabled: disabledSubmitBtn || isLoading,
             })}
           >
             {isLogin ? t("login-btn") : t("register-btn")}

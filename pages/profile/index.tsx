@@ -27,16 +27,38 @@ const Profile: NextPage = () => {
     //send data to server fetch
   };
 
+  const onChangeEmail = () => {};
+
+  const onChangePass1 = () => {};
+
+  const onChangePass2 = () => {};
+
   return (
     <div className={cn("card", "profile")}>
       {loading && <Loader height="100px" />}
       <div className={cn("fields")}>
         <label htmlFor="email">{t("email")}</label>
-        <input type="email" name="email" id="email" value={email} />
+        <input
+          type="email"
+          name="email"
+          id="email"
+          value={email}
+          onChange={onChangeEmail}
+        />
         <label htmlFor="pass1">{t("newPassword")}</label>
-        <input type="password" name="pass1" id="pass1" />
+        <input
+          type="password"
+          name="pass1"
+          id="pass1"
+          onChange={onChangePass1}
+        />
         <label htmlFor="pass2">{t("newPassOneMoreTime")}</label>
-        <input type="password" name="pass2" id="pass2" />
+        <input
+          type="password"
+          name="pass2"
+          id="pass2"
+          onChange={onChangePass2}
+        />
       </div>
       <button onClick={onSave} className={cn("btn", "profile__save")}>
         {t("save")}

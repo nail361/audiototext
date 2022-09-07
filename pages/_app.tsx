@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Suspense, useEffect, useState } from "react";
 import Head from "next/head";
 import Layout from "../components/layout/layout";
+import { Toaster } from "react-hot-toast";
 import { appWithTranslation } from "next-i18next";
 import nextI18nConfig from "../next-i18next.config";
 import store from "../store";
@@ -45,6 +46,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <Suspense fallback="loading">
         <Layout>
           <Loading />
+          <Toaster />
           <Component {...pageProps} />
         </Layout>
       </Suspense>
