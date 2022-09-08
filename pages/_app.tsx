@@ -41,6 +41,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <Head>
+        <title>SpeechToText</title>
+        <meta name="author" content="nail361 and shubin"></meta>
+        <meta name="description" content="Распознавание голоса в текст"></meta>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Suspense fallback="loading">
