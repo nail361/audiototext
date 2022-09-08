@@ -6,6 +6,11 @@ const nextConfig = {
   swcMinify: true,
   i18n,
   output: "standalone",
+  experimental: {
+    images: {
+      allowFutureImage: true,
+    },
+  },
 };
 
 module.exports = nextConfig;

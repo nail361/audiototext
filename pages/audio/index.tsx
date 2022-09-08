@@ -3,7 +3,7 @@ import type { NextPage, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import Image from "next/future/image";
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { RootState } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
@@ -35,11 +35,13 @@ const Audio: NextPage = () => {
   const router = useRouter();
   const [filesCount, setFilesCount] = useState(0);
   const [audio, setAudio] = useState<AudioList[]>([]);
-  const [pageCount, setPageCount] = useState(0);
+  const [pageCount, setPageCount] = useState(1);
+  const [curPage, setCurPage] = useState(1);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   let audioList = null;
 
   const onAudioListSuccess = (data: {
+    status: "string";
     totalPages: number;
     data: [
       {
@@ -56,7 +58,7 @@ const Audio: NextPage = () => {
     setPageCount(data.totalPages);
 
     const audio = data.data.map((audioItem) => {
-      return { ...audioItem, detecting: false };
+      return { ...audioItem, ready: !!audioItem.ready, detecting: false };
     });
 
     setAudio(audio);
@@ -67,6 +69,7 @@ const Audio: NextPage = () => {
 
   const getAudio = useCallback(
     (page: number) => {
+      setCurPage(page);
       const formData = new FormData();
       formData.append("page", page.toString());
       formData.append("itemsPerPage", itemsPerPage.toString());
@@ -88,22 +91,22 @@ const Audio: NextPage = () => {
   }, [getAudio]);
 
   const readFiles = (e: ChangeEvent<HTMLInputElement>) => {
-    if (isUpload) return;
-
     const files = e.target!.files;
     if (!files) {
       return;
     }
 
-    setFilesCount(files.length);
+    // setFilesCount(files.length);
     sendAudioToServer(files);
   };
 
   const sendAudioToServer = (files: FileList) => {
     const formData = new FormData();
+    formData.append("page", curPage.toString());
+    formData.append("itemPerPage", itemsPerPage.toString());
 
     for (let i = 0; i < files.length; i++) {
-      formData.append("file", files[i]);
+      formData.append("file[]", files[i]);
     }
 
     uploadAudio(
@@ -131,7 +134,7 @@ const Audio: NextPage = () => {
       }
     ];
   }) => {
-    setPageCount(data.totalPages);
+    onAudioListSuccess(data);
   };
 
   const detectAudio = (id: string, cost: number) => {
@@ -204,11 +207,7 @@ const Audio: NextPage = () => {
   };
 
   const handlePageClick = (event: any) => {
-    const newPage = (event.selected * itemsPerPage) % audio.length;
-    console.log(
-      `User requested page number ${event.selected}, which is page ${newPage}`
-    );
-
+    const newPage = event.selected + 1;
     getAudio(newPage);
   };
 
@@ -264,13 +263,12 @@ const Audio: NextPage = () => {
           <span className={cn("icon-wrapper")}>
             <Image
               className={cn("icon-wrapper__icon", {
-                icon_wrapper__icon_spin: isUpload,
+                "icon-wrapper__icon_spin": isUpload,
               })}
               src={isUpload ? "/icons/loading.png" : "/icons/upload.png"}
               alt="Выбрать файл"
               width={25}
               height={25}
-              objectFit="contain"
             />
           </span>
           <span>
