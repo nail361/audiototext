@@ -41,7 +41,7 @@ const Welcome: NextPage = () => {
   }
 
   const onStartClickHandler = () => {
-    if (isAuth) router.push("/profile");
+    if (isAuth) router.push("/audio");
     else router.push("/auth");
   };
 

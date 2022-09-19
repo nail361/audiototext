@@ -13,6 +13,7 @@ import Prompt from "../../components/prompt";
 import AudioItem from "../../components/audioItem";
 import Loader from "../../components/loader";
 import useAPI from "../../hooks/use-api";
+import toast from "react-hot-toast";
 
 import classNames from "classnames/bind";
 import styles from "./audio.module.scss";
@@ -22,6 +23,7 @@ const cn = classNames.bind(styles);
 const Paginator = React.lazy(() => import("../../components/paginator"));
 
 const itemsPerPage = 10;
+let curDetecting = 0;
 
 type AudioList = Audio & {
   detecting: boolean;
@@ -65,20 +67,17 @@ const Audio: NextPage = () => {
   };
 
   const { isLoading, sendRequest } = useAPI();
-  const { isLoading: isUpload, sendRequest: uploadAudio } = useAPI();
+  const { isLoading: isUpload, sendRequest: uploadAudioRequest } = useAPI();
 
   const getAudio = useCallback(
     (page: number) => {
       setCurPage(page);
-      const formData = new FormData();
-      formData.append("page", page.toString());
-      formData.append("itemsPerPage", itemsPerPage.toString());
 
       sendRequest(
         {
-          url: "getAudioList",
+          url: `getAudioList?page=${page}&itemsPerPage=${itemsPerPage}`,
+          method: "GET",
           headers: { Authorization: "Bearer " + token },
-          body: formData,
         },
         onAudioListSuccess
       );
@@ -109,7 +108,7 @@ const Audio: NextPage = () => {
       formData.append("file[]", files[i]);
     }
 
-    uploadAudio(
+    uploadAudioRequest(
       {
         url: "uploadAudio",
         headers: { Authorization: "Bearer " + token },
@@ -149,9 +148,20 @@ const Audio: NextPage = () => {
     });
     setAudio(newAudio);
 
-    //fetch
+    const formData = new FormData();
+    formData.append("audioID", id);
 
-    setTimeout(() => detectingReady(id, 100), 1000);
+    curDetecting = parseInt(id);
+
+    sendRequest(
+      {
+        url: "detectAudio",
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      },
+      detectingReady,
+      detectingError
+    );
   };
 
   const editAudio = (id: string) => {
@@ -159,8 +169,17 @@ const Audio: NextPage = () => {
   };
 
   const deleteAudio = (id: string) => {
-    const newAudio = audio.filter((audio) => audio.id != id);
-    setAudio(newAudio);
+    sendRequest(
+      {
+        url: `deleteAudio?audioID=${id}`,
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token },
+      },
+      () => {
+        const newAudio = audio.filter((audio) => audio.id != id);
+        setAudio(newAudio);
+      }
+    );
   };
 
   const deleteAudioPrompt = (id: string) => {
@@ -183,11 +202,11 @@ const Audio: NextPage = () => {
     setPromptDialog(null);
   };
 
-  const detectingReady = (id: string, moneyLeft: number) => {
-    dispatch(walletActions.update(moneyLeft));
+  const detectingReady = (data: { moneyLeft: number }) => {
+    dispatch(walletActions.update(data.moneyLeft));
 
     const newAudio = audio.map((audio) => {
-      if (audio.id == id) {
+      if (parseInt(audio.id) == curDetecting) {
         audio.detecting = false;
         audio.ready = true;
       }
@@ -196,13 +215,16 @@ const Audio: NextPage = () => {
     setAudio(newAudio);
   };
 
-  const detectingError = (id: string) => {
+  const detectingError = (error: string) => {
+    toast.error(error);
+
     const newAudio = audio.map((audio) => {
-      if (audio.id == id) {
+      if (parseInt(audio.id) == curDetecting) {
         audio.detecting = false;
       }
       return audio;
     });
+
     setAudio(newAudio);
   };
 
