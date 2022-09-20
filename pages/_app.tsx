@@ -12,30 +12,30 @@ import store from "../store";
 import { Provider } from "react-redux";
 import Loader from "../components/loader";
 
-function Loading() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+// function Loading() {
+//   const router = useRouter();
+//   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const handleStart = (url: string) =>
-      url !== router.asPath && setLoading(true);
-    const handleComplete = (url: string) =>
-      url === router.asPath && setLoading(false);
+//   useEffect(() => {
+//     const handleStart = (url: string) =>
+//       url !== router.asPath && setLoading(true);
+//     const handleComplete = (url: string) =>
+//       url === router.asPath && setLoading(false);
 
-    router.events.on("routeChangeStart", handleStart);
-    router.events.on("routeChangeComplete", handleComplete);
-    router.events.on("routeChangeError", handleComplete);
+//     router.events.on("routeChangeStart", handleStart);
+//     router.events.on("routeChangeComplete", handleComplete);
+//     router.events.on("routeChangeError", handleComplete);
 
-    return () => {
-      router.events.off("routeChangeStart", handleStart);
-      router.events.off("routeChangeComplete", handleComplete);
-      router.events.off("routeChangeError", handleComplete);
-    };
-  });
+//     return () => {
+//       router.events.off("routeChangeStart", handleStart);
+//       router.events.off("routeChangeComplete", handleComplete);
+//       router.events.off("routeChangeError", handleComplete);
+//     };
+//   });
 
-  if (loading) return <Loader height="100px" top={"40%"} />;
-  else return null;
-}
+//   if (loading) return <Loader height="100px" top={"40%"} />;
+//   else return null;
+// }
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -46,9 +46,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="description" content="Распознавание голоса в текст"></meta>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <Suspense fallback="loading">
+      <Suspense fallback={<Loader height="100px" top={"40%"} />}>
         <Layout>
-          <Loading />
+          {/* <Loading /> */}
           <Toaster />
           <Component {...pageProps} />
         </Layout>

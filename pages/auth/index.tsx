@@ -60,20 +60,21 @@ const Auth: NextPage = () => {
     event.preventDefault();
     if (disabledSubmitBtn) return;
 
-    const formData = new FormData();
-    formData.append("email", email.current!.value);
-    formData.append("password", pass.current!.value);
-
     if (isLogin) {
       sendRequest(
         {
-          url: "auth",
-          body: formData,
+          url: `auth?
+                email=${email.current!.value}
+                &password=${pass.current!.value}`,
+          method: "GET",
         },
         onAuthSuccess,
         onAuthError
       );
     } else {
+      const formData = new FormData();
+      formData.append("email", email.current!.value);
+      formData.append("password", pass.current!.value);
       formData.append("name", name.current!.value);
 
       sendRequest(

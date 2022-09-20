@@ -57,8 +57,8 @@ const Audio: NextPage = () => {
       }
     ];
   }) => {
+    console.log(data);
     setPageCount(data.totalPages);
-
     const audio = data.data.map((audioItem) => {
       return { ...audioItem, ready: !!audioItem.ready, detecting: false };
     });
@@ -72,7 +72,6 @@ const Audio: NextPage = () => {
   const getAudio = useCallback(
     (page: number) => {
       setCurPage(page);
-
       sendRequest(
         {
           url: `getAudioList?page=${page}&itemsPerPage=${itemsPerPage}`,
@@ -86,7 +85,7 @@ const Audio: NextPage = () => {
   );
 
   useEffect(() => {
-    getAudio(1);
+    if (token.length > 0) getAudio(1);
   }, [getAudio]);
 
   const readFiles = (e: ChangeEvent<HTMLInputElement>) => {
