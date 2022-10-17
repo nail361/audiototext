@@ -5,6 +5,7 @@
   border: none;
   height: 25px;
   text-align: center;
+  margin-right: 5px;
 
   &:focus-visible {
     outline: none;
@@ -18,5 +19,9 @@
   &_highlight {
     background-color: $light-color;
     color: white;
+  }
+
+  &_attention {
+    color: lightcoral;
   }
 }

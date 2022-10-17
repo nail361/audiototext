@@ -17,6 +17,8 @@ function TextBlock(props: textBlockType) {
   const {
     id,
     text,
+    originalText,
+    confidence,
     startTime,
     endTime,
     curTime,
@@ -35,13 +37,16 @@ function TextBlock(props: textBlockType) {
   };
 
   return (
-    <input
-      className={cn("span-block", { "span-block_highlight": inTime })}
+    <span
+      className={cn("span-block", {
+        "span-block_highlight": inTime,
+        "span-block_attention": confidence <= 0.5,
+      })}
       onInput={onInput}
       onClick={() => onClickCallback(id)}
-      value={text}
-      size={text.length <= 2 ? 2 : (text.length - 2) * 1.15}
-    />
+    >
+      {text}
+    </span>
   );
 }
 

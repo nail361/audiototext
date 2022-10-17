@@ -8,7 +8,7 @@ import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { RootState } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { walletActions } from "../../store/wallet";
-import Audio from "../../models/audio";
+import Audio from "../../models/complexAudio";
 import Prompt from "../../components/prompt";
 import AudioItem from "../../components/audioItem";
 import Loader from "../../components/loader";
@@ -57,7 +57,6 @@ const Audio: NextPage = () => {
       }
     ];
   }) => {
-    console.log(data);
     setPageCount(data.totalPages);
     const audio = data.data.map((audioItem) => {
       return { ...audioItem, ready: !!audioItem.ready, detecting: false };

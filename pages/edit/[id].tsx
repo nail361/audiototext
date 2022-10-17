@@ -3,10 +3,13 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useEffect, useState, ReactElement, useCallback } from "react";
-import Audio from "../../models/audio";
+import { RootState } from "../../store";
+import { useSelector } from "react-redux";
+import SimpleAudio from "../../models/simpleAudio";
 import AudioPlayer from "../../components/audioPlayer";
 import TextBlock from "../../components/textBlock";
 import { textData } from "../../types/textData";
+import useAPI from "../../hooks/use-api";
 import Prompt from "../../components/prompt";
 
 import DownloadTextFile from "../../utils/downloadTextFile";
@@ -16,13 +19,48 @@ import styles from "./edit.module.scss";
 
 const cn = classNames.bind(styles);
 
-type AudioEdit = Audio & {
-  textData: textData[];
+type AudioEdit = SimpleAudio & {
+  textData: Array<textData>;
+};
+
+type WordFromResponse = {
+  id: string;
+  confidence: number;
+  startTime: string;
+  endTime: string;
+  word: string;
+  originalWord: string;
+};
+
+type RecievedTextData = Array<Array<WordFromResponse>>;
+
+const preparedTextData = (data: RecievedTextData): Array<textData> => {
+  const preparedData: Array<textData> = [];
+
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[i].length; j++) {
+      let word = data[i][j].word;
+      if (j == 0) word = word[0].toUpperCase() + word.slice(1);
+      if (j == data[i].length - 1) word += ".";
+
+      preparedData.push({
+        id: data[i][j].id,
+        confidence: data[i][j].confidence,
+        startTime: parseInt(data[i][j].startTime),
+        endTime: parseInt(data[i][j].endTime),
+        text: word,
+        originalText: data[i][j].originalWord,
+      });
+    }
+  }
+
+  return preparedData;
 };
 
 const Edit: NextPage = () => {
   const { t } = useTranslation("edit");
   const router = useRouter();
+  const token = useSelector((state: RootState) => state.auth.token);
   const [audio, setAudio] = useState<AudioEdit | null>(null);
   const [curTime, setCurTime] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
@@ -31,8 +69,10 @@ const Edit: NextPage = () => {
   const { id } = router.query;
 
   useEffect(() => {
-    getAudio();
-  }, []);
+    if (token.length > 0) getAudio();
+  }, [getAudio]);
+
+  const { isLoading, sendRequest } = useAPI();
 
   const textSpans = [];
 
@@ -44,7 +84,7 @@ const Edit: NextPage = () => {
 
   const onTextBlockChange = (id: string, text: string) => {
     if (audio?.textData) {
-      const newTextData: textData[] = audio.textData.map((tb) => {
+      const newTextData: Array<textData> = audio.textData.map((tb) => {
         if (tb.id == id) {
           tb.text = text;
           return tb;
@@ -127,6 +167,7 @@ const Edit: NextPage = () => {
           originalText={audio.textData[index].originalText}
           startTime={audio.textData[index].startTime}
           curTime={curTime}
+          confidence={audio.textData[index].confidence}
           endTime={audio.textData[index].endTime}
           onClickCallback={onTextBlockClick}
           onChangeCallback={onTextBlockChange}
@@ -135,40 +176,38 @@ const Edit: NextPage = () => {
     }
   }
 
-  const getAudio = () => {
-    //fetch id --получить аудио с сервака
+  const getAudio = useCallback(() => {
+    sendRequest(
+      {
+        url: `getDetectedAudio?audioID=${id}`,
+        method: "GET",
+        headers: { Authorization: "Bearer " + token },
+      },
+      onAudioGetSuccess
+    );
+  }, [sendRequest, token]);
+
+  const onAudioGetSuccess = (data: {
+    data: {
+      date: string;
+      duration: string;
+      id: number;
+      name: string;
+      src: string;
+      textData: RecievedTextData;
+    };
+  }) => {
+    console.log(data);
+
+    const response = data.data;
 
     setAudio({
-      id: "1",
-      src: "https://cdn.drivemusic.me/dl/online/SJdIvsBU7UHNBqDUeHd9BQ/1660688637/download_music/2014/05/nico-vinz-am-i-wrong.mp3",
-      date: "14.02.2022",
-      name: "супер длинное имя",
-      duration: "1:30",
-      cost: 100,
-      ready: true,
-      textData: [
-        {
-          id: "1",
-          text: "привет",
-          originalText: "привет",
-          startTime: 0,
-          endTime: 30,
-        },
-        {
-          id: "2",
-          text: "как",
-          originalText: "как",
-          startTime: 30,
-          endTime: 45,
-        },
-        {
-          id: "3",
-          text: "дела",
-          originalText: "дела",
-          startTime: 45,
-          endTime: 56,
-        },
-      ],
+      id: response.id.toString(),
+      src: response.src,
+      date: response.date,
+      duration: response.duration,
+      name: response.name,
+      textData: preparedTextData(response.textData),
     });
   };
 
@@ -207,7 +246,9 @@ const Edit: NextPage = () => {
             title={t("revert")}
           />
         </div>
-        <div className={cn("text-block")}>{textSpans}</div>
+        <div className={cn("text-block")} contentEditable="true">
+          {textSpans}
+        </div>
       </div>
     </>
   );
