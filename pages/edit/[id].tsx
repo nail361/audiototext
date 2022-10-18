@@ -1,8 +1,15 @@
+import React, {
+  useEffect,
+  useState,
+  ReactElement,
+  useCallback,
+  ReactNode,
+  useRef,
+} from "react";
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useEffect, useState, ReactElement, useCallback } from "react";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
 import SimpleAudio from "../../models/simpleAudio";
@@ -19,9 +26,9 @@ import styles from "./edit.module.scss";
 
 const cn = classNames.bind(styles);
 
-type AudioEdit = SimpleAudio & {
-  textData: Array<textData>;
-};
+const Paginator = React.lazy(() => import("../../components/paginator"));
+
+const WORDS_PER_PAGE = 300;
 
 type WordFromResponse = {
   id: string;
@@ -34,7 +41,7 @@ type WordFromResponse = {
 
 type RecievedTextData = Array<Array<WordFromResponse>>;
 
-const preparedTextData = (data: RecievedTextData): Array<textData> => {
+const preparedTextDataFun = (data: RecievedTextData): Array<textData> => {
   const preparedData: Array<textData> = [];
 
   for (let i = 0; i < data.length; i++) {
@@ -49,6 +56,7 @@ const preparedTextData = (data: RecievedTextData): Array<textData> => {
         startTime: parseInt(data[i][j].startTime),
         endTime: parseInt(data[i][j].endTime),
         text: word,
+        inTime: false,
         originalText: data[i][j].originalWord,
       });
     }
@@ -61,42 +69,53 @@ const Edit: NextPage = () => {
   const { t } = useTranslation("edit");
   const router = useRouter();
   const token = useSelector((state: RootState) => state.auth.token);
-  const [audio, setAudio] = useState<AudioEdit | null>(null);
+  const [audio, setAudio] = useState<SimpleAudio>();
+  const [preparedData, setPreparedTextData] = useState<Array<textData>>([]);
   const [curTime, setCurTime] = useState(0);
+  const [correctedTime, setCorrectedTime] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   const [saving, setSaving] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
+  const [curPage, setCurPage] = useState(0);
+  const textWrapper = useRef<HTMLDivElement>(null);
+
   let savingTimeout: NodeJS.Timeout;
   const { id } = router.query;
 
   useEffect(() => {
-    if (token.length > 0) getAudio();
-  }, [getAudio]);
+    const newPreparedTextData = preparedData.map((td) => {
+      td.inTime = td.startTime <= curTime && td.endTime > curTime;
+      return td;
+    });
+    setPreparedTextData(newPreparedTextData);
+  }, [curTime]);
 
   const { isLoading, sendRequest } = useAPI();
 
-  const textSpans = [];
+  const textSpans: Array<ReactNode> = [];
+
+  const paginatedText = (): Array<React.ReactNode> =>
+    textSpans.slice(
+      curPage * WORDS_PER_PAGE,
+      curPage * WORDS_PER_PAGE + WORDS_PER_PAGE
+    );
 
   const onTextBlockClick = (id: string) => {
-    const textBlock = audio?.textData.find((tb) => tb.id == id);
+    const textBlock = preparedData.find((tb) => tb.id == id);
 
-    if (textBlock) onAudioProgress(textBlock.startTime);
+    if (textBlock) setCorrectedTime(textBlock.startTime);
   };
 
   const onTextBlockChange = (id: string, text: string) => {
-    if (audio?.textData) {
-      const newTextData: Array<textData> = audio.textData.map((tb) => {
+    if (preparedData) {
+      const newTextData: Array<textData> = preparedData.map((tb) => {
         if (tb.id == id) {
           tb.text = text;
           return tb;
         } else return tb;
       });
 
-      const newAudio = {
-        ...audio,
-        texData: newTextData,
-      };
-
-      setAudio(newAudio);
+      setPreparedTextData(newTextData);
       saveChanges();
     }
   };
@@ -106,8 +125,8 @@ const Edit: NextPage = () => {
       //@ts-ignore
       <Prompt
         t={t}
-        title={t("delete_prompt.title")}
-        text={t("delete_prompt.text")}
+        title={t("revertDialog.title")}
+        text={t("revertDialog.text")}
         onAccept={() => {
           revertTextToOriginal();
           closePromptDialog();
@@ -122,23 +141,19 @@ const Edit: NextPage = () => {
   };
 
   const revertTextToOriginal = () => {
-    if (audio?.textData) {
-      const newTextData = audio.textData.map((tb) => {
+    if (preparedData) {
+      const newTextData = preparedData.map((tb) => {
         tb.text = tb.originalText;
         return tb;
       });
-      const newAudio = {
-        ...audio,
-        texData: newTextData,
-      };
 
-      setAudio(newAudio);
+      setPreparedTextData(newTextData);
       saveChanges();
     }
   };
 
   const downloadText = () => {
-    const computedText: string = audio!.textData.reduce(
+    const computedText: string = preparedData.reduce(
       (accumulator, nextValue) => (accumulator += nextValue.text + " "),
       ""
     );
@@ -157,18 +172,23 @@ const Edit: NextPage = () => {
     }, 1000);
   };
 
-  if (audio) {
-    for (let index = 0; index < audio.textData.length; index++) {
+  const handlePageClick = (event: any) => {
+    setCurPage(event.selected);
+    textWrapper.current!.scrollTop = 0;
+  };
+
+  if (preparedData) {
+    for (let index = 0; index < preparedData.length; index++) {
       textSpans.push(
         <TextBlock
-          key={audio.textData[index].id}
-          id={audio.textData[index].id}
-          text={audio.textData[index].text}
-          originalText={audio.textData[index].originalText}
-          startTime={audio.textData[index].startTime}
-          curTime={curTime}
-          confidence={audio.textData[index].confidence}
-          endTime={audio.textData[index].endTime}
+          key={preparedData[index].id}
+          id={preparedData[index].id}
+          text={preparedData[index].text}
+          originalText={preparedData[index].originalText}
+          startTime={preparedData[index].startTime}
+          inTime={preparedData[index].inTime}
+          confidence={preparedData[index].confidence}
+          endTime={preparedData[index].endTime}
           onClickCallback={onTextBlockClick}
           onChangeCallback={onTextBlockChange}
         />
@@ -187,6 +207,10 @@ const Edit: NextPage = () => {
     );
   }, [sendRequest, token]);
 
+  useEffect(() => {
+    if (token.length > 0) getAudio();
+  }, [getAudio]);
+
   const onAudioGetSuccess = (data: {
     data: {
       date: string;
@@ -197,9 +221,11 @@ const Edit: NextPage = () => {
       textData: RecievedTextData;
     };
   }) => {
-    console.log(data);
-
     const response = data.data;
+    const preparedTextData = preparedTextDataFun(response.textData);
+    setPreparedTextData(preparedTextData);
+
+    setPageCount(Math.ceil(preparedTextData.length / WORDS_PER_PAGE));
 
     setAudio({
       id: response.id.toString(),
@@ -207,7 +233,6 @@ const Edit: NextPage = () => {
       date: response.date,
       duration: response.duration,
       name: response.name,
-      textData: preparedTextData(response.textData),
     });
   };
 
@@ -227,7 +252,7 @@ const Edit: NextPage = () => {
           <AudioPlayer
             audioSrc={audio.src}
             duration={audio.duration}
-            curTime={curTime}
+            correctedTime={correctedTime}
             onAudioProgress={onAudioProgress}
           />
         </div>
@@ -246,9 +271,17 @@ const Edit: NextPage = () => {
             title={t("revert")}
           />
         </div>
-        <div className={cn("text-block")} contentEditable="true">
-          {textSpans}
+        <div className={cn("text-block")} ref={textWrapper}>
+          {paginatedText()}
         </div>
+        {pageCount > 1 && (
+          <div className={cn("pagination-wrapper")}>
+            <Paginator
+              pageCount={pageCount}
+              handlePageClick={handlePageClick}
+            />
+          </div>
+        )}
       </div>
     </>
   );

@@ -8,7 +8,7 @@ import styles from "./textBlock.module.scss";
 const cn = classNames.bind(styles);
 
 type textBlockType = textData & {
-  curTime: number;
+  inTime: boolean;
   onClickCallback: (id: string) => void;
   onChangeCallback: (id: string, text: string) => void;
 };
@@ -21,18 +21,16 @@ function TextBlock(props: textBlockType) {
     confidence,
     startTime,
     endTime,
-    curTime,
+    inTime,
     onClickCallback,
     onChangeCallback,
   } = props;
-  const [inTime, setInTime] = useState(false);
 
-  useEffect(() => {
-    setInTime(startTime <= curTime && endTime > curTime);
-  }, [startTime, endTime, curTime]);
-
-  const onInput = (event: SyntheticEvent<HTMLInputElement>) => {
-    let newText = event.currentTarget.value;
+  const onInput = (event: any) => {
+    console.log("CHANGE1");
+    event.preventDefault();
+    console.log("CHANGE2");
+    let newText = event.currentTarget.innerText;
     onChangeCallback(id, newText);
   };
 
@@ -42,7 +40,9 @@ function TextBlock(props: textBlockType) {
         "span-block_highlight": inTime,
         "span-block_attention": confidence <= 0.5,
       })}
-      onInput={onInput}
+      title={`${originalText} (${startTime}-${endTime}) [${confidence}]`}
+      contentEditable={true}
+      onChange={onInput}
       onClick={() => onClickCallback(id)}
     >
       {text}

@@ -9,17 +9,19 @@ type AudioElementType = {
   audioSrc: string;
   duration: string;
   name?: string;
-  curTime: number;
+  correctedTime: number;
   onAudioProgress: (time: number) => void;
 };
 
 function AudioPlayer(props: AudioElementType) {
-  const { curTime, onAudioProgress } = props;
+  const { correctedTime, onAudioProgress } = props;
+  const [curTime, setCurTime] = useState(0);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [volume, setVolume] = useState<number>(100);
 
   const onTimeUpdate = useCallback(() => {
+    setCurTime(audioRef.current!.currentTime);
     onAudioProgress(audioRef.current!.currentTime);
   }, [onAudioProgress]);
 
@@ -36,8 +38,8 @@ function AudioPlayer(props: AudioElementType) {
   }, [audioRef, onTimeUpdate]);
 
   useEffect(() => {
-    audioRef.current!.currentTime = curTime;
-  }, [curTime]);
+    audioRef.current!.currentTime = correctedTime;
+  }, [correctedTime]);
 
   const onAudioEnded = () => {
     setPlaying(false);

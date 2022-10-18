@@ -5,4 +5,5 @@ export type textData = {
   originalText: string;
   startTime: number;
   endTime: number;
+  inTime: boolean;
 };

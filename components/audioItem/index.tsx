@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import Audio from "../../models/audio";
+import Audio from "../../models/complexAudio";
 import Loader from "../loader";
 import type { WithTranslation } from "next-i18next";
 
