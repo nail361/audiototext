@@ -47,8 +47,15 @@ const preparedTextDataFun = (data: RecievedTextData): Array<textData> => {
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < data[i].length; j++) {
       let word = data[i][j].word;
-      if (j == 0) word = word[0].toUpperCase() + word.slice(1);
-      if (j == data[i].length - 1) word += ".";
+      let originalWord = data[i][j].originalWord;
+      if (j == 0) {
+        word = word[0].toUpperCase() + word.slice(1);
+        originalWord = originalWord[0].toUpperCase() + originalWord.slice(1);
+      }
+      if (j == data[i].length - 1) {
+        word += ".";
+        originalWord += ".";
+      }
 
       preparedData.push({
         id: data[i][j].id,
@@ -57,7 +64,7 @@ const preparedTextDataFun = (data: RecievedTextData): Array<textData> => {
         endTime: parseInt(data[i][j].endTime),
         text: word,
         inTime: false,
-        originalText: data[i][j].originalWord,
+        originalText: originalWord,
       });
     }
   }
@@ -65,13 +72,14 @@ const preparedTextDataFun = (data: RecievedTextData): Array<textData> => {
   return preparedData;
 };
 
+const cashedIdToSave: Set<string> = new Set();
+
 const Edit: NextPage = () => {
   const { t } = useTranslation("edit");
   const router = useRouter();
   const token = useSelector((state: RootState) => state.auth.token);
   const [audio, setAudio] = useState<SimpleAudio>();
   const [preparedData, setPreparedTextData] = useState<Array<textData>>([]);
-  const [curTime, setCurTime] = useState(0);
   const [correctedTime, setCorrectedTime] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   const [saving, setSaving] = useState(false);
@@ -82,23 +90,35 @@ const Edit: NextPage = () => {
   let savingTimeout: NodeJS.Timeout;
   const { id } = router.query;
 
-  useEffect(() => {
-    const newPreparedTextData = preparedData.map((td) => {
-      td.inTime = td.startTime <= curTime && td.endTime > curTime;
-      return td;
-    });
-    setPreparedTextData(newPreparedTextData);
-  }, [curTime]);
-
   const { isLoading, sendRequest } = useAPI();
 
-  const textSpans: Array<ReactNode> = [];
+  const paginatedText = (): Array<React.ReactNode> => {
+    const textSpans: Array<ReactNode> = [];
+    textSpans.length = WORDS_PER_PAGE;
 
-  const paginatedText = (): Array<React.ReactNode> =>
-    textSpans.slice(
-      curPage * WORDS_PER_PAGE,
-      curPage * WORDS_PER_PAGE + WORDS_PER_PAGE
-    );
+    let j = 0;
+    let end = curPage * WORDS_PER_PAGE + WORDS_PER_PAGE;
+    if (end > preparedData.length) end = preparedData.length;
+    for (let i = curPage * WORDS_PER_PAGE; i < end; i++) {
+      textSpans[j] = (
+        <TextBlock
+          key={preparedData[i].id}
+          id={preparedData[i].id}
+          text={preparedData[i].text}
+          originalText={preparedData[i].originalText}
+          startTime={preparedData[i].startTime}
+          inTime={preparedData[i].inTime}
+          confidence={preparedData[i].confidence}
+          endTime={preparedData[i].endTime}
+          onClickCallback={onTextBlockClick}
+          onChangeCallback={onTextBlockChange}
+        />
+      );
+      j++;
+    }
+
+    return textSpans;
+  };
 
   const onTextBlockClick = (id: string) => {
     const textBlock = preparedData.find((tb) => tb.id == id);
@@ -116,7 +136,7 @@ const Edit: NextPage = () => {
       });
 
       setPreparedTextData(newTextData);
-      saveChanges();
+      saveChanges(id);
     }
   };
 
@@ -148,7 +168,7 @@ const Edit: NextPage = () => {
       });
 
       setPreparedTextData(newTextData);
-      saveChanges();
+      //send to server event
     }
   };
 
@@ -161,40 +181,41 @@ const Edit: NextPage = () => {
     DownloadTextFile(audio!.name, computedText);
   };
 
-  const saveChanges = () => {
-    setSaving(true);
+  const saveChanges = (id: string) => {
+    return;
+    console.log(id);
+    cashedIdToSave.add(id);
 
     clearTimeout(savingTimeout);
 
     savingTimeout = setTimeout(() => {
-      // send changes to server
-      setSaving(false);
-    }, 1000);
+      clearTimeout(savingTimeout);
+      setSaving(true);
+      console.log(cashedIdToSave);
+      cashedIdToSave.clear();
+      return;
+      sendRequest(
+        {
+          url: "saveText",
+          method: "POST",
+          headers: { Authorization: "Bearer " + token },
+        },
+        () => {
+          setSaving(false);
+        }
+      );
+      cashedIdToSave.clear();
+    }, 5000);
   };
 
-  const handlePageClick = (event: any) => {
-    setCurPage(event.selected);
+  const goToPage = (pageNumber: number) => {
+    setCurPage(pageNumber);
     textWrapper.current!.scrollTop = 0;
   };
 
-  if (preparedData) {
-    for (let index = 0; index < preparedData.length; index++) {
-      textSpans.push(
-        <TextBlock
-          key={preparedData[index].id}
-          id={preparedData[index].id}
-          text={preparedData[index].text}
-          originalText={preparedData[index].originalText}
-          startTime={preparedData[index].startTime}
-          inTime={preparedData[index].inTime}
-          confidence={preparedData[index].confidence}
-          endTime={preparedData[index].endTime}
-          onClickCallback={onTextBlockClick}
-          onChangeCallback={onTextBlockChange}
-        />
-      );
-    }
-  }
+  const handlePageClick = (event: any) => {
+    goToPage(event.selected);
+  };
 
   const getAudio = useCallback(() => {
     sendRequest(
@@ -237,7 +258,17 @@ const Edit: NextPage = () => {
   };
 
   const onAudioProgress = (time: number) => {
-    setCurTime(time);
+    let inTimeIndex = -1;
+    const newPreparedTextData = preparedData.map((td, index) => {
+      td.inTime = td.startTime <= time && td.endTime > time;
+      if (td.inTime) inTimeIndex = index;
+      return td;
+    });
+
+    const newPage = Math.floor(inTimeIndex / WORDS_PER_PAGE);
+    if (inTimeIndex >= 0 && curPage != newPage) goToPage(newPage);
+
+    setPreparedTextData(newPreparedTextData);
   };
 
   if (!audio) {
@@ -259,7 +290,9 @@ const Edit: NextPage = () => {
         <div className={cn("controls-block")}>
           <div className={cn("save-icon", { "save-icon_hide": !saving })} />
           <span className={cn("controls-block__name")}>{audio.name}</span>
-          <span className={cn("controls-block__date")}>{audio.date}</span>
+          <span className={cn("controls-block__date")}>
+            {new Date(audio.date).toLocaleString()}
+          </span>
           <div
             className={cn("controls-block__download")}
             onClick={downloadText}
@@ -305,4 +338,4 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
   };
 };
 
-export default Edit;
+export default React.memo(Edit);

@@ -166,4 +166,8 @@ function AudioPlayer(props: AudioElementType) {
   );
 }
 
-export default AudioPlayer;
+function memoEqual(prevProps: AudioElementType, nextProps: AudioElementType) {
+  return prevProps.correctedTime === nextProps.correctedTime;
+}
+
+export default React.memo(AudioPlayer, memoEqual);

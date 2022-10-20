@@ -14,4 +14,8 @@
   flex: 1;
 
   padding-top: calc($header-height + 20px);
+
+  @media (max-width: 900px) {
+    padding-top: calc($header-mobile + 15px);
+  }
 }

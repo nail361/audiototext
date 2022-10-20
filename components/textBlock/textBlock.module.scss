@@ -3,10 +3,10 @@
 .span-block {
   font-size: 1.2rem;
   border: none;
-  height: 25px;
-  text-align: center;
-  margin-right: 5px;
+  height: 30px;
+  text-align: left;
   white-space: nowrap;
+  background-color: transparent;
 
   &:focus-visible {
     outline: none;

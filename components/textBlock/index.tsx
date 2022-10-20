@@ -26,28 +26,30 @@ function TextBlock(props: textBlockType) {
     onChangeCallback,
   } = props;
 
-  const onInput = (event: any) => {
-    console.log("CHANGE1");
-    event.preventDefault();
-    console.log("CHANGE2");
-    let newText = event.currentTarget.innerText;
+  const onInput = (event: SyntheticEvent<HTMLInputElement>) => {
+    let newText = event.currentTarget.value;
     onChangeCallback(id, newText);
   };
 
   return (
-    <span
+    <input
       className={cn("span-block", {
         "span-block_highlight": inTime,
         "span-block_attention": confidence <= 0.5,
       })}
+      style={{ width: `${text.length + 1}ch` }}
       title={`${originalText} (${startTime}-${endTime}) [${confidence}]`}
-      contentEditable={true}
-      onChange={onInput}
+      onInput={onInput}
       onClick={() => onClickCallback(id)}
-    >
-      {text}
-    </span>
+      value={text}
+    />
   );
 }
 
-export default TextBlock;
+function memoEqual(prevProps: textBlockType, nextProps: textBlockType) {
+  return (
+    prevProps.text === nextProps.text && prevProps.inTime === nextProps.inTime
+  );
+}
+
+export default React.memo(TextBlock, memoEqual);
