@@ -40,46 +40,63 @@ type WordFromResponse = {
 };
 
 type RecievedTextData = Array<Array<WordFromResponse>>;
+type PreparedData = textData & { prevId: string; nextId: string };
 
-const preparedTextDataFun = (data: RecievedTextData): Array<textData> => {
-  const preparedData: Array<textData> = [];
+const preparedTextDataFun = (data: RecievedTextData): Array<PreparedData> => {
+  const preparedData: Array<PreparedData> = [];
 
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].length; j++) {
-      let word = data[i][j].word;
-      let originalWord = data[i][j].originalWord;
+  const flatData = data.flatMap((td: WordFromResponse[]) => {
+    for (let j = 0; j < td.length; j++) {
       if (j == 0) {
-        word = word[0].toUpperCase() + word.slice(1);
-        originalWord = originalWord[0].toUpperCase() + originalWord.slice(1);
+        td[j].word = td[j].word[0].toUpperCase() + td[j].word.slice(1);
+        td[j].originalWord =
+          td[j].originalWord[0].toUpperCase() + td[j].originalWord.slice(1);
       }
-      if (j == data[i].length - 1) {
-        word += ".";
-        originalWord += ".";
+      if (j == td.length - 1) {
+        td[j].word = td[j].word + ".";
+        td[j].originalWord = td[j].originalWord + ".";
       }
-
-      preparedData.push({
-        id: data[i][j].id,
-        confidence: data[i][j].confidence,
-        startTime: parseInt(data[i][j].startTime),
-        endTime: parseInt(data[i][j].endTime),
-        text: word,
-        inTime: false,
-        originalText: originalWord,
-      });
     }
+
+    return td;
+  });
+
+  let prevId = "";
+
+  for (let i = 0; i < flatData.length; i++) {
+    let nextId = "";
+    if (i + 1 < flatData.length) nextId = flatData[i + 1].id;
+
+    const curData = flatData[i];
+    if (curData == undefined) continue;
+
+    preparedData.push({
+      id: curData.id,
+      prevId,
+      nextId,
+      confidence: curData.confidence,
+      startTime: parseInt(curData.startTime),
+      endTime: parseInt(curData.endTime),
+      text: curData.word,
+      originalText: curData.originalWord,
+      inTime: false,
+    });
+
+    prevId = curData.id;
   }
 
   return preparedData;
 };
 
 const cashedIdToSave: Set<string> = new Set();
+let savingTimeout: NodeJS.Timeout;
 
 const Edit: NextPage = () => {
   const { t } = useTranslation("edit");
   const router = useRouter();
   const token = useSelector((state: RootState) => state.auth.token);
   const [audio, setAudio] = useState<SimpleAudio>();
-  const [preparedData, setPreparedTextData] = useState<Array<textData>>([]);
+  const [preparedData, setPreparedTextData] = useState<Array<PreparedData>>([]);
   const [correctedTime, setCorrectedTime] = useState(0);
   const [promptDialog, setPromptDialog] = useState<ReactElement | null>(null);
   const [saving, setSaving] = useState(false);
@@ -87,7 +104,6 @@ const Edit: NextPage = () => {
   const [curPage, setCurPage] = useState(0);
   const textWrapper = useRef<HTMLDivElement>(null);
 
-  let savingTimeout: NodeJS.Timeout;
   const { id } = router.query;
 
   const { isLoading, sendRequest } = useAPI();
@@ -128,7 +144,7 @@ const Edit: NextPage = () => {
 
   const onTextBlockChange = (id: string, text: string) => {
     if (preparedData) {
-      const newTextData: Array<textData> = preparedData.map((tb) => {
+      const newTextData: Array<PreparedData> = preparedData.map((tb) => {
         if (tb.id == id) {
           tb.text = text;
           return tb;
@@ -182,7 +198,6 @@ const Edit: NextPage = () => {
   };
 
   const saveChanges = (id: string) => {
-    return;
     console.log(id);
     cashedIdToSave.add(id);
 
@@ -191,14 +206,34 @@ const Edit: NextPage = () => {
     savingTimeout = setTimeout(() => {
       clearTimeout(savingTimeout);
       setSaving(true);
-      console.log(cashedIdToSave);
-      cashedIdToSave.clear();
-      return;
+
+      const wordsToSave: Array<{
+        id: string;
+        beforeId: string;
+        afterId: string;
+        text: string;
+      }> = [];
+
+      for (let i = 0; i < preparedData.length; i++) {
+        if (cashedIdToSave.has(preparedData[i].id)) {
+          wordsToSave.push({
+            id: preparedData[i].id,
+            beforeId: preparedData[i].prevId,
+            afterId: preparedData[i].nextId,
+            text: preparedData[i].text,
+          });
+        }
+      }
+
+      const formData = new FormData();
+      formData.append("textData", JSON.stringify(wordsToSave));
+
       sendRequest(
         {
           url: "saveText",
           method: "POST",
           headers: { Authorization: "Bearer " + token },
+          body: formData,
         },
         () => {
           setSaving(false);
