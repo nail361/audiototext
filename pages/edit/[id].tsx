@@ -74,9 +74,9 @@ const preparedTextDataFun = (data: RecievedTextData): Array<PreparedData> => {
       id: curData.id,
       prevId,
       nextId,
-      confidence: curData.confidence,
-      startTime: parseInt(curData.startTime),
-      endTime: parseInt(curData.endTime),
+      confidence: curData.confidence ? curData.confidence : 1,
+      startTime: curData.startTime ? parseInt(curData.startTime) : 0,
+      endTime: curData.endTime ? parseInt(curData.endTime) : 0,
       text: curData.word,
       originalText: curData.originalWord,
       inTime: false,
@@ -136,23 +136,23 @@ const Edit: NextPage = () => {
     return textSpans;
   };
 
-  const onTextBlockClick = (id: string) => {
-    const textBlock = preparedData.find((tb) => tb.id == id);
+  const onTextBlockClick = (wordId: string) => {
+    const textBlock = preparedData.find((tb) => tb.id == wordId);
 
     if (textBlock) setCorrectedTime(textBlock.startTime);
   };
 
-  const onTextBlockChange = (id: string, text: string) => {
+  const onTextBlockChange = (wordId: string, text: string) => {
     if (preparedData) {
       const newTextData: Array<PreparedData> = preparedData.map((tb) => {
-        if (tb.id == id) {
+        if (tb.id == wordId) {
           tb.text = text;
           return tb;
         } else return tb;
       });
 
       setPreparedTextData(newTextData);
-      saveChanges(id);
+      saveChanges(wordId);
     }
   };
 
@@ -197,9 +197,8 @@ const Edit: NextPage = () => {
     DownloadTextFile(audio!.name, computedText);
   };
 
-  const saveChanges = (id: string) => {
-    console.log(id);
-    cashedIdToSave.add(id);
+  const saveChanges = (wordId: string) => {
+    cashedIdToSave.add(wordId);
 
     clearTimeout(savingTimeout);
 
@@ -211,6 +210,8 @@ const Edit: NextPage = () => {
         id: string;
         beforeId: string;
         afterId: string;
+        startTime: string;
+        endTime: string;
         text: string;
       }> = [];
 
@@ -221,11 +222,14 @@ const Edit: NextPage = () => {
             beforeId: preparedData[i].prevId,
             afterId: preparedData[i].nextId,
             text: preparedData[i].text,
+            startTime: `${preparedData[i].startTime}s`,
+            endTime: `${preparedData[i].endTime}s`,
           });
         }
       }
 
       const formData = new FormData();
+      formData.append("audioID", id as string);
       formData.append("textData", JSON.stringify(wordsToSave));
 
       sendRequest(
@@ -236,7 +240,7 @@ const Edit: NextPage = () => {
           body: formData,
         },
         () => {
-          setSaving(false);
+          setTimeout(() => setSaving(false), 2000);
         }
       );
       cashedIdToSave.clear();

@@ -91,9 +91,11 @@ const useAPI = () => {
           const data = await response.json();
 
           if (data.status == "error") {
+            addCache(requestConfig.url, data.error, true);
             if (onError) {
-              addCache(requestConfig.url, data.error, true);
               onError(data.error);
+            } else {
+              toast.error(data.error);
             }
           } else {
             addCache(requestConfig.url, data, false);
