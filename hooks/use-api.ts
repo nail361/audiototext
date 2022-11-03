@@ -60,7 +60,7 @@ const useAPI = () => {
   const sendRequest = useCallback(
     async (
       requestConfig: RequestConfig,
-      onSuccess: <T>(data: T) => void,
+      onSuccess: (data: any) => void,
       onError?: (errorMsg: string) => void
     ) => {
       const curCache: Cache = checkCache(requestConfig.url);
