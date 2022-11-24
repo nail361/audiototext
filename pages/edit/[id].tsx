@@ -163,7 +163,6 @@ const Edit: NextPage = () => {
       );
       j++;
     }
-
     return textSpans;
   };
 
@@ -186,22 +185,25 @@ const Edit: NextPage = () => {
 
   const createNewTextBlocks = (id: string, words: string[]) => {
     const curWord = preparedData.get(id);
-    const newData = new Map(preparedData);
     let prevId = curWord!.id;
 
     const preparedId: Array<string> = [];
     const updatedPagedWords = [...pagedWords];
     for (let i = 0; i < words.length; i++) {
       preparedId.push(generateUniqId());
-      updatedPagedWords[curPage].push(preparedId[i]);
     }
+
+    const index = updatedPagedWords[curPage].findIndex(
+      (wordId: string) => wordId == curWord?.id
+    );
+    updatedPagedWords[curPage].splice(index + 1, 0, ...preparedId); // переделать, съедает слова
 
     for (let i = 0; i < words.length; i++) {
       const text: string = words[i];
       const nextId: string =
         i + 1 < words.length ? preparedId[i + 1] : curWord!.nextId;
 
-      newData.set(preparedId[i], {
+      const newWord = {
         id: preparedId[i],
         confidence: 1,
         inTime: false,
@@ -212,15 +214,15 @@ const Edit: NextPage = () => {
         page: curPage,
         startTime: 0,
         endTime: 0,
-      });
+      };
+
+      setPreparedTextData(new Map(preparedData.set(preparedId[i], newWord)));
+
       prevId = preparedId[i];
 
       saveChanges(preparedId[i]);
     }
 
-    setPreparedTextData(newData);
-
-    console.log(updatedPagedWords[curPage]);
     setPagedWords(updatedPagedWords);
   };
 
