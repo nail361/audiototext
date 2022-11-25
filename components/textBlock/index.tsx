@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, ClipboardEvent } from "react";
 
 import { textData } from "../../types/textData";
 
@@ -29,8 +29,11 @@ function TextBlock(props: textBlockType) {
   } = props;
 
   const onInput = (event: SyntheticEvent<HTMLInputElement>) => {
-    let newText = event.currentTarget.value;
+    const newText = event.currentTarget.value;
+    onInputFieldUpdate(newText);
+  };
 
+  const onInputFieldUpdate = (newText: string) => {
     if (newText.indexOf(" ") >= 0) {
       const words: string[] = newText.split(" ");
       newText = words[0];
@@ -38,14 +41,6 @@ function TextBlock(props: textBlockType) {
     }
 
     onChangeCallback(id, newText);
-  };
-
-  const onPaste = (event) => {
-    console.log(event);
-  };
-
-  const onCut = (event) => {
-    console.log(event);
   };
 
   return (
@@ -58,8 +53,6 @@ function TextBlock(props: textBlockType) {
       title={`${originalText} (${startTime}-${endTime}) [${confidence}] ${id}`}
       onInput={onInput}
       onClick={() => onClickCallback(id)}
-      onPaste={onPaste}
-      onCut={onCut}
       value={text}
     />
   );

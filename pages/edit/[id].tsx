@@ -180,7 +180,9 @@ const Edit: NextPage<TypePageProps> = (params) => {
       if (!updatedWord) return;
 
       updatedWord.text = text;
-      setPreparedTextData((prevState) => prevState.set(wordId, updatedWord));
+      setPreparedTextData(
+        (prevState) => new Map(prevState.set(wordId, updatedWord))
+      );
       saveChanges(wordId);
     }
   };
