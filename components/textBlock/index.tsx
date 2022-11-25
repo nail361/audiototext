@@ -55,7 +55,7 @@ function TextBlock(props: textBlockType) {
         "span-block_attention": confidence <= 0.5,
       })}
       style={{ width: `${text.length + 1}ch` }}
-      title={`${originalText} (${startTime}-${endTime}) [${confidence}]`}
+      title={`${originalText} (${startTime}-${endTime}) [${confidence}] ${id}`}
       onInput={onInput}
       onClick={() => onClickCallback(id)}
       onPaste={onPaste}

@@ -9,7 +9,6 @@ import React, {
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
 import SimpleAudio from "../../models/simpleAudio";
@@ -118,9 +117,12 @@ const cashedIdToSave: Set<string> = new Set();
 let savingTimeout: NodeJS.Timeout;
 let curInTimeWord: InTimeWord;
 
-const Edit: NextPage = () => {
+type TypePageProps = {
+  id: string;
+};
+
+const Edit: NextPage<TypePageProps> = (params) => {
   const { t } = useTranslation("edit");
-  const router = useRouter();
   const token = useSelector((state: RootState) => state.auth.token);
   const [audio, setAudio] = useState<SimpleAudio>();
   const [preparedData, setPreparedTextData] = useState<PreparedData>(new Map());
@@ -132,7 +134,7 @@ const Edit: NextPage = () => {
   const [curPage, setCurPage] = useState(0);
   const textWrapper = useRef<HTMLDivElement>(null);
 
-  const { id } = router.query as string;
+  const { id } = params;
 
   const { isLoading, sendRequest } = useAPI();
 
@@ -178,7 +180,7 @@ const Edit: NextPage = () => {
       if (!updatedWord) return;
 
       updatedWord.text = text;
-      setPreparedTextData(new Map(preparedData.set(wordId, updatedWord)));
+      setPreparedTextData((prevState) => prevState.set(wordId, updatedWord));
       saveChanges(wordId);
     }
   };
@@ -196,7 +198,10 @@ const Edit: NextPage = () => {
     const index = updatedPagedWords[curPage].findIndex(
       (wordId: string) => wordId == curWord?.id
     );
-    updatedPagedWords[curPage].splice(index + 1, 0, ...preparedId); // переделать, съедает слова
+
+    updatedPagedWords[curPage].splice(index + 1, 0, ...preparedId);
+
+    setPagedWords(updatedPagedWords);
 
     for (let i = 0; i < words.length; i++) {
       const text: string = words[i];
@@ -216,14 +221,12 @@ const Edit: NextPage = () => {
         endTime: 0,
       };
 
-      setPreparedTextData(new Map(preparedData.set(preparedId[i], newWord)));
+      setPreparedTextData((prevState) => prevState.set(preparedId[i], newWord));
 
       prevId = preparedId[i];
 
       saveChanges(preparedId[i]);
     }
-
-    setPagedWords(updatedPagedWords);
   };
 
   const deleteWord = (wordId: string) => {
@@ -529,10 +532,12 @@ const Edit: NextPage = () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const locale = context.locale!;
+  const id: string = context!.params!.id as string;
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ["edit"])),
+      id,
     },
     revalidate: 10,
   };
