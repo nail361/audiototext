@@ -5,6 +5,7 @@ import React, {
   useCallback,
   ReactNode,
   useRef,
+  ChangeEvent,
 } from "react";
 import { NextPage, GetStaticProps, GetStaticPaths } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -27,8 +28,6 @@ import styles from "./edit.module.scss";
 const cn = classNames.bind(styles);
 
 const Paginator = React.lazy(() => import("../../components/paginator"));
-
-const WORDS_PER_PAGE = 300;
 
 type WordFromResponse = {
   id: string;
@@ -59,7 +58,8 @@ type complexTextData = textData & {
 type PreparedData = Map<string, complexTextData>;
 
 const preparedTextDataFun = (
-  data: RecievedTextData
+  data: RecievedTextData,
+  wordsPerPage: number
 ): [PreparedData, Array<Array<string>>] => {
   const preparedData: PreparedData = new Map();
   const pagedWords: Array<Array<string>> = [];
@@ -90,7 +90,7 @@ const preparedTextDataFun = (
     const curData = flatData[i];
     if (curData == undefined) continue;
 
-    const page = Math.floor(i / WORDS_PER_PAGE);
+    const page = Math.floor(i / wordsPerPage);
 
     pagedWords[page].push(curData.id);
 
@@ -132,6 +132,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
   const [saving, setSaving] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [curPage, setCurPage] = useState(0);
+  const [wordsPerPage, setWordsPerPage] = useState(300);
   const textWrapper = useRef<HTMLDivElement>(null);
 
   const { id } = params;
@@ -189,7 +190,10 @@ const Edit: NextPage<TypePageProps> = (params) => {
 
   const createNewTextBlocks = (id: string, words: string[]) => {
     const curWord = preparedData.get(id);
-    let prevId = curWord!.id;
+
+    if (!curWord) return;
+
+    let prevId = curWord.id;
 
     const preparedId: Array<string> = [];
     const updatedPagedWords = [...pagedWords];
@@ -198,7 +202,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
     }
 
     const index = updatedPagedWords[curPage].findIndex(
-      (wordId: string) => wordId == curWord?.id
+      (wordId: string) => wordId == curWord.id
     );
 
     updatedPagedWords[curPage].splice(index + 1, 0, ...preparedId);
@@ -208,7 +212,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
     for (let i = 0; i < words.length; i++) {
       const text: string = words[i];
       const nextId: string =
-        i + 1 < words.length ? preparedId[i + 1] : curWord!.nextId;
+        i + 1 < words.length ? preparedId[i + 1] : curWord.nextId;
 
       const newWord = {
         id: preparedId[i],
@@ -229,37 +233,50 @@ const Edit: NextPage<TypePageProps> = (params) => {
 
       saveChanges(preparedId[i]);
     }
+
+    curWord.nextId = preparedId[0];
+    setPreparedTextData((prevState) => prevState.set(curWord.id, curWord));
   };
 
   const deleteWord = (wordId: string) => {
-    const newData = new Map(preparedData);
-
-    const wordToDelete = newData.get(wordId);
-    if (!wordToDelete) return;
-
-    const prevWord = newData.get(wordToDelete.prevId);
-    const nextWord = newData.get(wordToDelete.nextId);
-
-    if (prevWord && nextWord) {
-      newData.set(prevWord.id, {
-        ...prevWord,
-        nextId: nextWord.id,
-      });
-      newData.set(nextWord.id, {
-        ...nextWord,
-        prevId: prevWord.id,
-      });
-    }
-
-    newData.delete(wordId);
-
-    setPreparedTextData(newData);
-
     const updatedPagedWords = [...pagedWords];
     updatedPagedWords[curPage] = updatedPagedWords[curPage].filter(
       (id: string) => id != wordId
     );
     setPagedWords(updatedPagedWords);
+
+    const wordToDelete = preparedData.get(wordId);
+    if (!wordToDelete) return;
+
+    const prevWord = preparedData.get(wordToDelete.prevId);
+    const nextWord = preparedData.get(wordToDelete.nextId);
+
+    if (prevWord && nextWord) {
+      setPreparedTextData(
+        (prevState) =>
+          new Map(
+            prevState.set(prevWord.id, {
+              ...prevWord,
+              nextId: nextWord.id,
+            })
+          )
+      );
+
+      setPreparedTextData(
+        (prevState) =>
+          new Map(
+            prevState.set(nextWord.id, {
+              ...prevWord,
+              prevId: prevWord.id,
+            })
+          )
+      );
+    }
+
+    setPreparedTextData((prevState) => {
+      prevState.delete(wordId);
+      return new Map(prevState);
+    });
   };
 
   const dialogRevert = () => {
@@ -364,6 +381,31 @@ const Edit: NextPage<TypePageProps> = (params) => {
     }, 2000);
   };
 
+  const onWordsPerPageSelect = (event: ChangeEvent<HTMLSelectElement>) => {
+    const newWordsPerPage = parseInt(event.target.value);
+    setWordsPerPage(newWordsPerPage);
+    updatePagedWords(newWordsPerPage);
+  };
+
+  const updatePagedWords = (wordsPerPage: number) => {
+    const flatPagedWords = pagedWords.flat();
+    const newPagedWords: Array<Array<string>> = [];
+
+    const newPageCount = Math.ceil(preparedData.size / wordsPerPage);
+    setPageCount(newPageCount);
+
+    for (let i = 0; i < flatPagedWords.length; i += wordsPerPage) {
+      let j = 0;
+      newPagedWords.push([]);
+      while (wordsPerPage > j && flatPagedWords.length > i + j) {
+        newPagedWords[newPagedWords.length - 1].push(flatPagedWords[i + j]);
+        j++;
+      }
+    }
+
+    setPagedWords(newPagedWords);
+  };
+
   const goToPage = (pageNumber: number) => {
     setCurPage(pageNumber);
     textWrapper.current!.scrollTop = 0;
@@ -402,12 +444,13 @@ const Edit: NextPage<TypePageProps> = (params) => {
   }) => {
     const response = data.data;
     const [preparedTextData, preparedPagedWords] = preparedTextDataFun(
-      response.textData
+      response.textData,
+      wordsPerPage
     );
     setPreparedTextData(preparedTextData);
     setPagedWords(preparedPagedWords);
 
-    setPageCount(Math.ceil(preparedTextData.size / WORDS_PER_PAGE));
+    setPageCount(Math.ceil(preparedTextData.size / wordsPerPage));
 
     setAudio({
       id: response.id.toString(),
@@ -500,6 +543,20 @@ const Edit: NextPage<TypePageProps> = (params) => {
           />
         </div>
         <div className={cn("controls-block")}>
+          <div>
+            <select
+              name="wordsPerPageSelect"
+              id="wordsPerPageSelect"
+              defaultValue={300}
+              onChange={onWordsPerPageSelect}
+            >
+              <option value="100">100</option>
+              <option value="200">200</option>
+              <option value="300">300</option>
+              <option value="500">500</option>
+            </select>
+            <label htmlFor="wordsPerPageSelect">{t("wordsPerPage")}</label>
+          </div>
           <div className={cn("save-icon", { "save-icon_hide": !saving })} />
           <span className={cn("controls-block__name")}>{audio.name}</span>
           <span className={cn("controls-block__date")}>

@@ -1,4 +1,5 @@
 {
+  "wordsPerPage": "word per page",
   "revert": "Revert original text",
   "download": "Download text",
   "revertDialog": {

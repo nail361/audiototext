@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, ClipboardEvent } from "react";
+import React, { ChangeEvent } from "react";
 
 import { textData } from "../../types/textData";
 
@@ -28,33 +28,44 @@ function TextBlock(props: textBlockType) {
     createNewTextBlocks,
   } = props;
 
-  const onInput = (event: SyntheticEvent<HTMLInputElement>) => {
-    const newText = event.currentTarget.value;
-    onInputFieldUpdate(newText);
+  let oldText = text;
+  let newText = text;
+
+  let savingTimeout: NodeJS.Timeout;
+
+  const onChange = (event: ChangeEvent<HTMLSpanElement>) => {
+    newText = event.currentTarget.innerHTML;
+    clearTimeout(savingTimeout);
+    savingTimeout = setTimeout(SaveChanges, 1000);
   };
 
-  const onInputFieldUpdate = (newText: string) => {
-    if (newText.indexOf(" ") >= 0) {
-      const words: string[] = newText.split(" ");
-      newText = words[0];
-      createNewTextBlocks(id, words.slice(1));
-    }
+  const SaveChanges = () => {
+    if (oldText != newText) {
+      if (newText.indexOf(" ") >= 0) {
+        const words: string[] = newText.split(" ");
+        newText = words[0];
+        createNewTextBlocks(id, words.slice(1));
+      }
 
-    onChangeCallback(id, newText);
+      onChangeCallback(id, newText);
+    }
   };
 
   return (
-    <input
+    <span
+      contentEditable
+      suppressContentEditableWarning={true}
       className={cn("span-block", {
         "span-block_highlight": inTime,
         "span-block_attention": confidence <= 0.5,
       })}
       style={{ width: `${text.length + 1}ch` }}
       title={`${originalText} (${startTime}-${endTime}) [${confidence}] ${id}`}
-      onInput={onInput}
+      onInput={onChange}
       onClick={() => onClickCallback(id)}
-      value={text}
-    />
+    >
+      {text}
+    </span>
   );
 }
 

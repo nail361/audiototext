@@ -1,4 +1,5 @@
 {
+  "wordsPerPage": "Слов на странице",
   "revert": "Вернуть исходный текст",
   "download": "Скачать текст",
   "revertDialog": {
