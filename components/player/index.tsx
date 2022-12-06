@@ -1,19 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import classNames from "classnames/bind";
-import styles from "./audioPlayer.module.scss";
+import styles from "./player.module.scss";
 
 const cn = classNames.bind(styles);
 
-type AudioElementType = {
-  audioSrc: string;
+const VideoPlayer = React.lazy(() => import("./video"));
+
+type PlayerType = {
+  src: string;
   duration: string;
   name?: string;
   correctedTime: number;
   onAudioProgress: (time: number) => void;
 };
 
-function AudioPlayer(props: AudioElementType) {
+function Player(props: PlayerType) {
   const { correctedTime, onAudioProgress } = props;
   const [curTime, setCurTime] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -105,69 +107,76 @@ function AudioPlayer(props: AudioElementType) {
     return `${hours.toFixed(0)}:${minutes}:${(seconds % 60).toFixed(0)}`;
   };
 
+  const isVideo: boolean = props.src.indexOf(".mp4") >= 0;
+
   return (
-    <div className={cn("audio-player")}>
-      <audio
-        ref={audioRef}
-        preload="auto"
-        className={cn("audio-player__audio")}
-        src={props.audioSrc}
-      ></audio>
-      <div className={cn("audio-player__timeline")} onClick={onTimeLineClick}>
-        <div
-          className={cn("audio-player__progress")}
-          style={{ width: progressBarWidth(curTime) }}
-        />
-      </div>
-      <div className={cn("audio-player__controls")}>
-        <div className={cn("audio-player__play-container")}>
+    <>
+      {isVideo && (
+        <VideoPlayer playing={playing} curTime={curTime} src={props.src} />
+      )}
+      <div className={cn("audio-player")}>
+        <audio
+          ref={audioRef}
+          preload="auto"
+          className={cn("audio-player__audio")}
+          src={props.src}
+        ></audio>
+        <div className={cn("audio-player__timeline")} onClick={onTimeLineClick}>
           <div
-            onClick={onPlayClickHandler}
-            className={cn("audio-player__toggle-play", {
-              "audio-player__toggle-play_play": !playing,
-              "audio-player__toggle-play_pause": playing,
-            })}
+            className={cn("audio-player__progress")}
+            style={{ width: progressBarWidth(curTime) }}
           />
         </div>
-        <div className={cn("audio-player-time")}>
-          <div className={cn("audio-player-time__current")}>
-            {getStringTime(curTime)}
-          </div>
-          <div className={cn("audio-player-time__divider")}>/</div>
-          <div className={cn("audio-player-length")}>{props.duration}</div>
-        </div>
-        {props.name && (
-          <div className={cn("audio-player__name")}>{props.name}</div>
-        )}
-        <div className={cn("audio-player-volume-container")}>
-          <div
-            className={cn("audio-player__volume-button")}
-            onClick={onVolumeClick}
-          >
+        <div className={cn("audio-player__controls")}>
+          <div className={cn("audio-player__play-container")}>
             <div
-              className={cn("audio-player__volume", {
-                "audio-player__volume_mute": volume == 0,
+              onClick={onPlayClickHandler}
+              className={cn("audio-player__toggle-play", {
+                "audio-player__toggle-play_play": !playing,
+                "audio-player__toggle-play_pause": playing,
               })}
             />
           </div>
-
-          <div
-            className={cn("audio-player__volume-slider")}
-            onClick={onChangeVolume}
-          >
+          <div className={cn("audio-player-time")}>
+            <div className={cn("audio-player-time__current")}>
+              {getStringTime(curTime)}
+            </div>
+            <div className={cn("audio-player-time__divider")}>/</div>
+            <div className={cn("audio-player-length")}>{props.duration}</div>
+          </div>
+          {props.name && (
+            <div className={cn("audio-player__name")}>{props.name}</div>
+          )}
+          <div className={cn("audio-player-volume-container")}>
             <div
-              className={cn("audio-player__volume-percentage")}
-              style={{ width: `${volume}%` }}
-            />
+              className={cn("audio-player__volume-button")}
+              onClick={onVolumeClick}
+            >
+              <div
+                className={cn("audio-player__volume", {
+                  "audio-player__volume_mute": volume == 0,
+                })}
+              />
+            </div>
+
+            <div
+              className={cn("audio-player__volume-slider")}
+              onClick={onChangeVolume}
+            >
+              <div
+                className={cn("audio-player__volume-percentage")}
+                style={{ width: `${volume}%` }}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
-function memoEqual(prevProps: AudioElementType, nextProps: AudioElementType) {
+function memoEqual(prevProps: PlayerType, nextProps: PlayerType) {
   return prevProps.correctedTime === nextProps.correctedTime;
 }
 
-export default React.memo(AudioPlayer, memoEqual);
+export default React.memo(Player, memoEqual);

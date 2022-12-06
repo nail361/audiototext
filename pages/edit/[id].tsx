@@ -13,7 +13,7 @@ import { useTranslation } from "next-i18next";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
 import SimpleAudio from "../../models/simpleAudio";
-import AudioPlayer from "../../components/audioPlayer";
+import Player from "../../components/player";
 import TextBlock from "../../components/textBlock";
 import { textData } from "../../types/textData";
 import useAPI from "../../hooks/use-api";
@@ -535,8 +535,9 @@ const Edit: NextPage<TypePageProps> = (params) => {
       {promptDialog}
       <div className={cn("wrapper")}>
         <div className={cn("audio-block")}>
-          <AudioPlayer
-            audioSrc={audio.src}
+          <Player
+            // src={audio.src}
+            src="/video.mp4"
             duration={audio.duration}
             correctedTime={correctedTime}
             onAudioProgress={onAudioProgress}
