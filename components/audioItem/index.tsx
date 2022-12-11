@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import Audio from "../../models/complexAudio";
+import Media from "../../models/complexMedia";
 import Loader from "../loader";
 import type { WithTranslation } from "next-i18next";
 
@@ -8,14 +8,14 @@ import styles from "./audioItem.module.scss";
 
 const cn = classNames.bind(styles);
 
-type AudioListType = {
+type MediaListType = {
   onDetectAudio: (id: string, cost: number) => void;
   onEditAudio: (id: string) => void;
   onDeleteAudio: (id: string) => void;
   detecting: boolean;
 };
 
-function AudioItem(props: Audio & AudioListType & WithTranslation) {
+function MediaItem(props: Media & MediaListType & WithTranslation) {
   const { t } = props;
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -73,7 +73,7 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
             <div
               title={`${t("table.detect")} ${props.cost}руб.`}
               className={cn("row__detect")}
-              onClick={() => props.onDetectAudio(props.id, props.cost)}
+              onClick={() => props.onDetect(props.id, props.cost)}
             >
               {props.cost}
             </div>
@@ -98,4 +98,4 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
   );
 }
 
-export default AudioItem;
+export default MediaItem;

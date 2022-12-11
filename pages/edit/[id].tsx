@@ -99,8 +99,8 @@ const preparedTextDataFun = (
       prevId,
       nextId,
       confidence: curData.confidence ? curData.confidence : 1,
-      startTime: curData.startTime ? parseInt(curData.startTime) : 0,
-      endTime: curData.endTime ? parseInt(curData.endTime) : 0,
+      startTime: curData.startTime ? parseFloat(curData.startTime) : 0,
+      endTime: curData.endTime ? parseFloat(curData.endTime) : 0,
       text: curData.word,
       originalText: curData.originalWord,
       inTime: false,
@@ -361,22 +361,22 @@ const Edit: NextPage<TypePageProps> = (params) => {
           }
         }
       });
-      /*
+
       const formData = new FormData();
       formData.append("audioID", id as string);
       formData.append("textData", JSON.stringify(wordsToSave));
 
-      sendRequest(
-        {
-          url: "saveText",
-          method: "POST",
-          headers: { Authorization: "Bearer " + token },
-          body: formData,
-        },
-        () => {
-          setTimeout(() => setSaving(false), 2000);
-        }
-      );*/
+      // sendRequest(
+      //   {
+      //     url: "saveText",
+      //     method: "POST",
+      //     headers: { Authorization: "Bearer " + token },
+      //     body: formData,
+      //   },
+      //   () => {
+      //     setTimeout(() => setSaving(false), 2000);
+      //   }
+      // );
       cashedIdToSave.clear();
     }, 2000);
   };
@@ -439,6 +439,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
       id: number;
       name: string;
       src: string;
+      is_video: number;
       textData: RecievedTextData;
     };
   }) => {
@@ -458,6 +459,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
       date: response.date,
       duration: response.duration,
       name: response.name,
+      withVideo: response.is_video == 1,
     });
   };
 
@@ -536,8 +538,8 @@ const Edit: NextPage<TypePageProps> = (params) => {
       <div className={cn("wrapper")}>
         <div className={cn("audio-block")}>
           <Player
-            // src={audio.src}
-            src="/video.mp4"
+            src={audio.src}
+            withVideo={audio.withVideo}
             duration={audio.duration}
             correctedTime={correctedTime}
             onAudioProgress={onAudioProgress}

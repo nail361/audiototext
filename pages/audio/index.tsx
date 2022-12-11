@@ -8,7 +8,7 @@ import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { RootState } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { walletActions } from "../../store/wallet";
-import Audio from "../../models/complexAudio";
+import Audio from "../../models/complexMedia";
 import Prompt from "../../components/prompt";
 import AudioItem from "../../components/audioItem";
 import Loader from "../../components/loader";

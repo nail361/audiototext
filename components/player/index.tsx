@@ -10,6 +10,7 @@ const VideoPlayer = React.lazy(() => import("./video"));
 type PlayerType = {
   src: string;
   duration: string;
+  withVideo: boolean;
   name?: string;
   correctedTime: number;
   onAudioProgress: (time: number) => void;
@@ -107,11 +108,9 @@ function Player(props: PlayerType) {
     return `${hours.toFixed(0)}:${minutes}:${(seconds % 60).toFixed(0)}`;
   };
 
-  const isVideo: boolean = props.src.indexOf(".mp4") >= 0;
-
   return (
     <>
-      {isVideo && (
+      {props.withVideo && (
         <VideoPlayer playing={playing} curTime={curTime} src={props.src} />
       )}
       <div className={cn("audio-player")}>

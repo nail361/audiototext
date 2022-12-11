@@ -4,4 +4,5 @@ export default interface SimpleAudio {
   date: string;
   name: string;
   duration: string;
+  withVideo: boolean;
 }
