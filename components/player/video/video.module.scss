@@ -32,14 +32,18 @@
   &__reset-position {
     width: 20px;
     height: 20px;
-    box-shadow: 0px 2px 4px 1px rgba(34, 60, 80, 0.3);
-    background-color: white;
     border-radius: 50%;
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 3px;
+    right: 3px;
     cursor: pointer;
     z-index: 2;
+    background-image: url("/icons/player/exit-fullscreen.png");
+    background-size: 20px;
+
+    &:hover {
+      box-shadow: 0px 2px 4px 1px rgba(34, 60, 80, 0.3);
+    }
   }
 
   &__video {
