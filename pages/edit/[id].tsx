@@ -145,7 +145,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
     if (Math.abs(pagedWords[curPage].length - wordsPerPage) > DELTA_WORDS) {
       updatePagedWords(wordsPerPage);
     }
-  }, [pagedWords[curPage].length]);
+  }, [pagedWords[curPage]?.length]);
 
   const paginatedText = (): Array<React.ReactNode> => {
     if (!preparedData) return [];
@@ -509,26 +509,41 @@ const Edit: NextPage<TypePageProps> = (params) => {
     let find = false;
     let nextCheckWord: complexTextData | undefined;
 
-    if (curInTimeWord.endTime > time) {
+    if (curInTimeWord.endTime < time) {
       nextCheckWord = preparedData.get(curInTimeWord.nextId);
-      while (nextCheckWord != null || !find) {
+      while (nextCheckWord != undefined && !find) {
         find = nextCheckWord!.endTime > time;
         nextCheckWord = preparedData.get(nextCheckWord!.nextId);
       }
     } else if (curInTimeWord.startTime > time) {
       nextCheckWord = preparedData.get(curInTimeWord.prevId);
-      while (nextCheckWord != null || !find) {
+      while (nextCheckWord != undefined && !find) {
         find = nextCheckWord!.endTime > time;
         nextCheckWord = preparedData.get(nextCheckWord!.prevId);
       }
     }
 
-    if (find && nextCheckWord != null) {
+    if (find && nextCheckWord != undefined) {
       const newPreparedTextData = new Map(preparedData);
-
       nextCheckWord.inTime = true;
+
+      const prevWord = preparedData.get(curInTimeWord.id);
+      if (prevWord) {
+        prevWord.inTime = false;
+        newPreparedTextData.set(prevWord.id, prevWord);
+      }
+
       newPreparedTextData.set(nextCheckWord.id, nextCheckWord);
       setPreparedTextData(newPreparedTextData);
+
+      curInTimeWord = {
+        id: nextCheckWord.id,
+        prevId: nextCheckWord.prevId,
+        nextId: nextCheckWord.nextId,
+        startTime: nextCheckWord.startTime,
+        endTime: nextCheckWord.endTime,
+        inTime: nextCheckWord.inTime,
+      };
 
       if (curPage != nextCheckWord.page) goToPage(nextCheckWord.page);
     }
