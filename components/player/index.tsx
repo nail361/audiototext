@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 
 import classNames from "classnames/bind";
 import styles from "./player.module.scss";
@@ -108,6 +114,11 @@ function Player(props: PlayerType) {
     return `${hours.toFixed(0)}:${minutes}:${(seconds % 60).toFixed(0)}`;
   };
 
+  const memoizedDuration = useMemo(
+    () => getStringTime(parseInt(props.duration)),
+    [props.duration]
+  );
+
   return (
     <>
       {props.withVideo && (
@@ -141,7 +152,7 @@ function Player(props: PlayerType) {
               {getStringTime(curTime)}
             </div>
             <div className={cn("audio-player-time__divider")}>/</div>
-            <div className={cn("audio-player-length")}>{props.duration}</div>
+            <div className={cn("audio-player-length")}>{memoizedDuration}</div>
           </div>
           {props.name && (
             <div className={cn("audio-player__name")}>{props.name}</div>
