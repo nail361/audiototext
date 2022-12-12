@@ -55,6 +55,7 @@ function VideoPlayer(props: VideoType) {
   };
 
   const handleSelector = cn("handle");
+  const inPlace: boolean = positionX == 0 && positionY == 0;
 
   return (
     <Draggable
@@ -67,7 +68,9 @@ function VideoPlayer(props: VideoType) {
     >
       <div className={cn("video-player")} ref={videoWrapper}>
         <div className={handleSelector} />
-        <div className={cn("video-player__reset-position")} onClick={reset} />
+        {!inPlace && (
+          <div className={cn("video-player__reset-position")} onClick={reset} />
+        )}
         <video
           className={cn("video-player__video")}
           src={src}
