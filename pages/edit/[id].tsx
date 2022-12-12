@@ -113,6 +113,7 @@ const preparedTextDataFun = (
   return [preparedData, pagedWords];
 };
 
+const DELTA_WORDS = 50;
 const cashedIdToSave: Set<string> = new Set();
 let savingTimeout: NodeJS.Timeout;
 let curInTimeWord: InTimeWord;
@@ -138,6 +139,13 @@ const Edit: NextPage<TypePageProps> = (params) => {
   const { id } = params;
 
   const { isLoading, sendRequest } = useAPI();
+
+  useEffect(() => {
+    if (pagedWords.length == 0) return;
+    if (Math.abs(pagedWords[curPage].length - wordsPerPage) > DELTA_WORDS) {
+      updatePagedWords(wordsPerPage);
+    }
+  }, [pagedWords[curPage].length]);
 
   const paginatedText = (): Array<React.ReactNode> => {
     if (!preparedData) return [];
@@ -196,18 +204,21 @@ const Edit: NextPage<TypePageProps> = (params) => {
     let prevId = curWord.id;
 
     const preparedId: Array<string> = [];
-    const updatedPagedWords = [...pagedWords];
+    const updatedPagedWords = pagedWords[curPage];
     for (let i = 0; i < words.length; i++) {
       preparedId.push(generateUniqId());
     }
 
-    const index = updatedPagedWords[curPage].findIndex(
+    const index = updatedPagedWords.findIndex(
       (wordId: string) => wordId == curWord.id
     );
 
-    updatedPagedWords[curPage].splice(index + 1, 0, ...preparedId);
+    updatedPagedWords.splice(index + 1, 0, ...preparedId);
 
-    setPagedWords(updatedPagedWords);
+    setPagedWords((prevState) => {
+      prevState[curPage] = updatedPagedWords;
+      return prevState;
+    });
 
     for (let i = 0; i < words.length; i++) {
       const text: string = words[i];
@@ -239,11 +250,14 @@ const Edit: NextPage<TypePageProps> = (params) => {
   };
 
   const deleteWord = (wordId: string) => {
-    const updatedPagedWords = [...pagedWords];
-    updatedPagedWords[curPage] = updatedPagedWords[curPage].filter(
+    const updatedPagedWords = pagedWords[curPage].filter(
       (id: string) => id != wordId
     );
-    setPagedWords(updatedPagedWords);
+
+    setPagedWords((prevState) => {
+      prevState[curPage] = updatedPagedWords;
+      return prevState;
+    });
 
     const wordToDelete = preparedData.get(wordId);
     if (!wordToDelete) return;
@@ -251,32 +265,24 @@ const Edit: NextPage<TypePageProps> = (params) => {
     const prevWord = preparedData.get(wordToDelete.prevId);
     const nextWord = preparedData.get(wordToDelete.nextId);
 
-    if (prevWord && nextWord) {
-      setPreparedTextData(
-        (prevState) =>
-          new Map(
-            prevState.set(prevWord.id, {
-              ...prevWord,
-              nextId: nextWord.id,
-            })
-          )
-      );
+    const newTextData = new Map(preparedData);
 
-      setPreparedTextData(
-        (prevState) =>
-          new Map(
-            prevState.set(nextWord.id, {
-              ...prevWord,
-              prevId: prevWord.id,
-            })
-          )
-      );
+    if (prevWord) {
+      newTextData.set(prevWord.id, {
+        ...prevWord,
+        nextId: nextWord ? nextWord.id : "",
+      });
+    }
+    if (nextWord) {
+      newTextData.set(nextWord.id, {
+        ...nextWord,
+        prevId: prevWord ? prevWord.id : "",
+      });
     }
 
-    setPreparedTextData((prevState) => {
-      prevState.delete(wordId);
-      return new Map(prevState);
-    });
+    newTextData.delete(wordId);
+
+    setPreparedTextData(newTextData);
   };
 
   const dialogRevert = () => {
@@ -403,7 +409,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
       }
     }
 
-    setPagedWords(newPagedWords);
+    setPagedWords((prevState) => newPagedWords);
   };
 
   const goToPage = (pageNumber: number) => {
