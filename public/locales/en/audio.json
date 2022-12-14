@@ -1,9 +1,9 @@
 {
-  "choose_audio": "Choose audio",
+  "choose_audio": "Choose media",
   "choosen_audio": "Choosen: ",
-  "no_audio": "No audio, upload a new one",
+  "no_audio": "No media, upload a new one",
   "table": {
-    "caption": "Audio list",
+    "caption": "Media list",
     "date": "Date",
     "name": "Name",
     "duration": "Duration",
@@ -18,6 +18,6 @@
   },
   "delete_prompt": {
     "title": "Are you sure to delete?",
-    "text": "This audio will be remove forever"
+    "text": "This media will be remove forever"
   }
 }
