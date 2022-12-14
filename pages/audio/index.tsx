@@ -8,7 +8,7 @@ import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { RootState } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { walletActions } from "../../store/wallet";
-import Audio from "../../models/complexMedia";
+import Audio from "../../models/complexAudio";
 import Prompt from "../../components/prompt";
 import AudioItem from "../../components/audioItem";
 import Loader from "../../components/loader";
@@ -43,15 +43,16 @@ const Audio: NextPage = () => {
   let audioList = null;
 
   const onAudioListSuccess = (data: {
-    status: "string";
+    status: string;
     totalPages: number;
     data: [
       {
-        id: string;
+        id: number;
         src: string;
         date: string;
         name: string;
-        duration: string;
+        duration: number;
+        is_video: number;
         cost: number;
         ready: boolean;
       }
@@ -59,7 +60,12 @@ const Audio: NextPage = () => {
   }) => {
     setPageCount(data.totalPages);
     const audio = data.data.map((audioItem) => {
-      return { ...audioItem, ready: !!audioItem.ready, detecting: false };
+      return {
+        ...audioItem,
+        ready: !!audioItem.ready,
+        detecting: false,
+        withVideo: audioItem.is_video == 1,
+      };
     });
 
     setAudio(audio);
@@ -125,8 +131,9 @@ const Audio: NextPage = () => {
         src: string;
         date: string;
         name: string;
-        duration: string;
-        cost: string;
+        duration: number;
+        is_video: number;
+        cost: number;
         ready: boolean;
       }
     ];
@@ -134,7 +141,7 @@ const Audio: NextPage = () => {
     onAudioListSuccess(data);
   };
 
-  const detectAudio = (id: string, cost: number) => {
+  const detectAudio = (id: number, cost: number) => {
     if (money < cost) {
       router.push("/wallet");
       return;
@@ -147,9 +154,9 @@ const Audio: NextPage = () => {
     setAudio(newAudio);
 
     const formData = new FormData();
-    formData.append("audioID", id);
+    formData.append("audioID", id.toString());
 
-    curDetecting = parseInt(id);
+    curDetecting = parseInt(id.toString());
 
     sendRequest(
       {
@@ -162,11 +169,11 @@ const Audio: NextPage = () => {
     );
   };
 
-  const editAudio = (id: string) => {
+  const editAudio = (id: number) => {
     router.push(`/edit/${id}`);
   };
 
-  const deleteAudio = (id: string) => {
+  const deleteAudio = (id: number) => {
     sendRequest(
       {
         url: `deleteAudio?audioID=${id}`,
@@ -180,7 +187,7 @@ const Audio: NextPage = () => {
     );
   };
 
-  const deleteAudioPrompt = (id: string) => {
+  const deleteAudioPrompt = (id: number) => {
     setPromptDialog(
       //@ts-ignore
       <Prompt
@@ -204,7 +211,7 @@ const Audio: NextPage = () => {
     dispatch(walletActions.update(data.moneyLeft));
 
     const newAudio = audio.map((audio) => {
-      if (parseInt(audio.id) == curDetecting) {
+      if (audio.id == curDetecting) {
         audio.detecting = false;
         audio.ready = true;
       }
@@ -217,7 +224,7 @@ const Audio: NextPage = () => {
     toast.error(error);
 
     const newAudio = audio.map((audio) => {
-      if (parseInt(audio.id) == curDetecting) {
+      if (audio.id == curDetecting) {
         audio.detecting = false;
       }
       return audio;
@@ -270,7 +277,7 @@ const Audio: NextPage = () => {
           id="file-uploader"
           multiple
           type="file"
-          accept="audio/*"
+          accept="audio/*,video/*"
           className={cn("file-uploader__input")}
           onChange={readFiles}
         />

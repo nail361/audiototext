@@ -1,8 +1,8 @@
 export default interface SimpleAudio {
-  id: string;
+  id: number;
   src: string;
   date: string;
   name: string;
-  duration: string;
+  duration: number;
   withVideo: boolean;
 }

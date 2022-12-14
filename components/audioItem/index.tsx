@@ -1,21 +1,23 @@
 import React, { useRef, useState, useEffect } from "react";
-import Media from "../../models/complexMedia";
+import Audio from "../../models/complexAudio";
 import Loader from "../loader";
 import type { WithTranslation } from "next-i18next";
+
+import { getStringTime } from "../../utils/utils";
 
 import classNames from "classnames/bind";
 import styles from "./audioItem.module.scss";
 
 const cn = classNames.bind(styles);
 
-type MediaListType = {
-  onDetectAudio: (id: string, cost: number) => void;
-  onEditAudio: (id: string) => void;
-  onDeleteAudio: (id: string) => void;
+type AudioListType = {
+  onDetectAudio: (id: number, cost: number) => void;
+  onEditAudio: (id: number) => void;
+  onDeleteAudio: (id: number) => void;
   detecting: boolean;
 };
 
-function MediaItem(props: Media & MediaListType & WithTranslation) {
+function AudioItem(props: Audio & AudioListType & WithTranslation) {
   const { t } = props;
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -61,7 +63,7 @@ function MediaItem(props: Media & MediaListType & WithTranslation) {
       />
       <div className={cn("row__cell")}>{props.date}</div>
       <div className={cn("row__cell")}>{props.name}</div>
-      <div className={cn("row__cell")}>{props.duration}</div>
+      <div className={cn("row__cell")}>{getStringTime(props.duration)}</div>
       <div className={cn("row__cell")} style={{ position: "relative" }}>
         {props.detecting && <Loader overlay={false} top={"-20%"} />}
         {!props.ready && !props.detecting && (
@@ -73,7 +75,7 @@ function MediaItem(props: Media & MediaListType & WithTranslation) {
             <div
               title={`${t("table.detect")} ${props.cost}руб.`}
               className={cn("row__detect")}
-              onClick={() => props.onDetect(props.id, props.cost)}
+              onClick={() => props.onDetectAudio(props.id, props.cost)}
             >
               {props.cost}
             </div>
@@ -98,4 +100,4 @@ function MediaItem(props: Media & MediaListType & WithTranslation) {
   );
 }
 
-export default MediaItem;
+export default AudioItem;

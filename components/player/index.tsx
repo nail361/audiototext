@@ -6,6 +6,8 @@ import React, {
   useMemo,
 } from "react";
 
+import { getStringTime } from "../../utils/utils";
+
 import classNames from "classnames/bind";
 import styles from "./player.module.scss";
 
@@ -15,7 +17,7 @@ const VideoPlayer = React.lazy(() => import("./video"));
 
 type PlayerType = {
   src: string;
-  duration: string;
+  duration: number;
   withVideo: boolean;
   name?: string;
   correctedTime: number;
@@ -103,19 +105,8 @@ function Player(props: PlayerType) {
     return (currentTime / audioRef.current.duration) * 100 + "%";
   };
 
-  const getStringTime = (time: number): string => {
-    let seconds: number = time;
-    let minutes: number = Math.floor(seconds / 60);
-    seconds -= minutes * 60;
-    const hours: number = Math.floor(minutes / 60);
-    minutes -= hours * 60;
-
-    if (hours === 0) return `${minutes}:${(seconds % 60).toFixed(0)}`;
-    return `${hours.toFixed(0)}:${minutes}:${(seconds % 60).toFixed(0)}`;
-  };
-
   const memoizedDuration = useMemo(
-    () => getStringTime(parseInt(props.duration)),
+    () => getStringTime(props.duration),
     [props.duration]
   );
 

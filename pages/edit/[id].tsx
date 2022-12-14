@@ -40,11 +40,8 @@ type WordFromResponse = {
 
 type InTimeWord = {
   id: string;
-  prevId: string;
-  nextId: string;
   startTime: number;
   endTime: number;
-  inTime: boolean;
 };
 
 type RecievedTextData = Array<Array<WordFromResponse>>;
@@ -116,7 +113,7 @@ const preparedTextDataFun = (
 const DELTA_WORDS = 50;
 const cashedIdToSave: Set<string> = new Set();
 let savingTimeout: NodeJS.Timeout;
-let curInTimeWord: InTimeWord;
+let curInTimeWord: InTimeWord | null;
 
 type TypePageProps = {
   id: string;
@@ -133,8 +130,11 @@ const Edit: NextPage<TypePageProps> = (params) => {
   const [saving, setSaving] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [curPage, setCurPage] = useState(0);
+  const curPageRef = useRef<number>();
   const [wordsPerPage, setWordsPerPage] = useState(300);
   const textWrapper = useRef<HTMLDivElement>(null);
+
+  curPageRef.current = curPage;
 
   const { id } = params;
 
@@ -441,7 +441,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
   const onAudioGetSuccess = (data: {
     data: {
       date: string;
-      duration: string;
+      duration: number;
       id: number;
       name: string;
       src: string;
@@ -460,7 +460,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
     setPageCount(Math.ceil(preparedTextData.size / wordsPerPage));
 
     setAudio({
-      id: response.id.toString(),
+      id: response.id,
       src: response.src,
       date: response.date,
       duration: response.duration,
@@ -470,82 +470,60 @@ const Edit: NextPage<TypePageProps> = (params) => {
   };
 
   const onAudioProgress = (time: number) => {
-    if (curInTimeWord == null) {
-      const word = preparedData.get(pagedWords[0][0]);
-      if (!word) return;
-      curInTimeWord = {
-        id: word.id,
-        prevId: word.prevId,
-        nextId: word.nextId,
-        startTime: word.startTime,
-        endTime: word.endTime,
-        inTime: false,
-      };
+    if (curInTimeWord != null) {
+      if (!(curInTimeWord.startTime <= time && time < curInTimeWord.endTime)) {
+        const word = preparedData.get(curInTimeWord.id)!;
+        word.inTime = false;
+        setPreparedTextData(
+          (prevState) => new Map(prevState.set(word.id, word))
+        );
+        curInTimeWord = null;
+      }
     }
 
-    if (curInTimeWord.startTime <= time && curInTimeWord.endTime > time) {
-      if (!curInTimeWord.inTime) {
-        curInTimeWord.inTime = true;
-        const updatedWord = preparedData.get(curInTimeWord.id);
-        if (updatedWord) {
-          updatedWord!.inTime = true;
-          setPreparedTextData(
-            new Map(preparedData.set(curInTimeWord.id, updatedWord))
-          );
+    if (curInTimeWord == null) {
+      let findPage: number = curPageRef.current ? curPageRef.current : 0;
+      let counter: number = 0;
+      //ищем на какой странице слово
+      while (findPage >= 0 && counter < 5) {
+        const firstPageWord = preparedData.get(pagedWords[findPage][0])!;
+        const lastPageWord = preparedData.get(
+          pagedWords[findPage][pagedWords[findPage].length - 1]
+        )!;
+
+        if (time > lastPageWord.endTime) {
+          findPage++;
+          if (findPage >= pagedWords.length) findPage = -1;
+        } else if (firstPageWord.startTime > time) {
+          findPage--;
+        } else {
+          //нашли нужную страницу
+          break;
+        }
+
+        counter++;
+      }
+
+      if (findPage >= 0) {
+        setCurPage(findPage);
+
+        //ищем конкретное слово на найденной странице
+        for (let i = 0; i < pagedWords[findPage].length; i++) {
+          const word = preparedData.get(pagedWords[findPage][i])!;
+          if (word.startTime <= time && time < word.endTime) {
+            curInTimeWord = {
+              id: word.id,
+              startTime: word.startTime,
+              endTime: word.endTime,
+            };
+            word.inTime = true;
+            setPreparedTextData(
+              (prevState) => new Map(prevState.set(word.id, word))
+            );
+            break;
+          }
         }
       }
-      return; // до сих пор находимся на том же слове
-    } else if (curInTimeWord.inTime) {
-      curInTimeWord.inTime = false;
-      const updatedWord = preparedData.get(curInTimeWord.id);
-      if (updatedWord) {
-        updatedWord!.inTime = false;
-        setPreparedTextData(
-          new Map(preparedData.set(curInTimeWord.id, updatedWord))
-        );
-      }
-    }
-
-    let find = false;
-    let nextCheckWord: complexTextData | undefined;
-
-    if (curInTimeWord.endTime < time) {
-      nextCheckWord = preparedData.get(curInTimeWord.nextId);
-      while (nextCheckWord != undefined && !find) {
-        find = nextCheckWord!.endTime > time;
-        nextCheckWord = preparedData.get(nextCheckWord!.nextId);
-      }
-    } else if (curInTimeWord.startTime > time) {
-      nextCheckWord = preparedData.get(curInTimeWord.prevId);
-      while (nextCheckWord != undefined && !find) {
-        find = nextCheckWord!.endTime > time;
-        nextCheckWord = preparedData.get(nextCheckWord!.prevId);
-      }
-    }
-
-    if (find && nextCheckWord != undefined) {
-      const newPreparedTextData = new Map(preparedData);
-      nextCheckWord.inTime = true;
-
-      const prevWord = preparedData.get(curInTimeWord.id);
-      if (prevWord) {
-        prevWord.inTime = false;
-        newPreparedTextData.set(prevWord.id, prevWord);
-      }
-
-      newPreparedTextData.set(nextCheckWord.id, nextCheckWord);
-      setPreparedTextData(newPreparedTextData);
-
-      curInTimeWord = {
-        id: nextCheckWord.id,
-        prevId: nextCheckWord.prevId,
-        nextId: nextCheckWord.nextId,
-        startTime: nextCheckWord.startTime,
-        endTime: nextCheckWord.endTime,
-        inTime: nextCheckWord.inTime,
-      };
-
-      if (curPage != nextCheckWord.page) goToPage(nextCheckWord.page);
     }
   };
 
@@ -604,6 +582,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
           <div className={cn("pagination-wrapper")}>
             <Paginator
               pageCount={pageCount}
+              curPage={curPage}
               handlePageClick={handlePageClick}
             />
           </div>

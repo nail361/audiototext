@@ -8,6 +8,7 @@ const cn = classNames.bind(styles);
 
 type PaginatorType = {
   handlePageClick: (event: any) => void;
+  curPage: number;
   pageCount: number;
 };
 
@@ -23,6 +24,7 @@ function Paginator(props: PaginatorType) {
       breakLabel="..."
       nextLabel=">"
       onPageChange={props.handlePageClick}
+      forcePage={props.curPage}
       pageRangeDisplayed={5}
       pageCount={props.pageCount}
       previousLabel="<"
