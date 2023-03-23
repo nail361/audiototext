@@ -1,12 +1,14 @@
 @import "./variables.scss";
+@import "./fonts.scss";
 
 html,
 body {
-  color: rgb(50, 50, 50);
+  color: #ffffff;
+  background-color: #08062c;
   font-size: 18px;
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu,
+  font-family: -apple-system, BlinkMacSystemFont, Mulish, Oxygen, Ubuntu,
     Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 
   @media (max-width: 900px) {

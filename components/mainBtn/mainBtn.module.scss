@@ -1,0 +1,52 @@
+.main-button {
+  background: linear-gradient(#736deb, #433cc3);
+  border-radius: 10px;
+  height: 50px;
+  width: 100px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+
+  box-shadow: 0px 4px 0px #312c96, 0px 0px 50px rgba(86, 113, 255, 0.25);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0 10px;
+
+  &:hover {
+    box-shadow: 0px 0px 20px #6159fe, 0px 0px 50px rgba(255, 255, 255, 0.25);
+  }
+
+  &:active {
+    box-shadow: 0px 0px 50px rgba(86, 113, 255, 0.25);
+  }
+
+  &:disabled {
+    box-shadow: 0px 4px 0px #312c96, 0px 0px 50px rgba(86, 113, 255, 0.25);
+  }
+
+  &_login {
+    width: 180px;
+    height: 40px;
+    text-transform: uppercase;
+  }
+
+  &_start {
+    width: 210px;
+  }
+
+  &_upload {
+    width: 260px;
+  }
+
+  &_start-use {
+    width: 320px;
+  }
+
+  &__icon {
+    margin-right: 10px;
+  }
+}

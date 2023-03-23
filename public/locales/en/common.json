@@ -1,6 +1,10 @@
 {
   "main": "Main",
+  "about": "About",
+  "instruction": "Instruction",
+  "price": "Price",
   "auth": "Login",
+  "register": "Register",
   "audio": "Media",
   "profile": "Profile",
   "contacts": "Contacts",

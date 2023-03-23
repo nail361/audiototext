@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { RootState } from "../../store";
 import { useSelector } from "react-redux";
+import MainBtn from "../mainBtn/mainBtn";
 
 import classNames from "classnames/bind";
 import styles from "./header.module.scss";
@@ -38,8 +39,8 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
 
   return (
     <header className={cn("header")}>
-      <div className={cn("header-row")}>
-        <div className={cn("header-row__logo")}>Аудиорасшифровщик.рф</div>
+      <div className={cn("header-column")}>
+        <div className={cn("header-column__logo")}>аудиорасшифровщик.рф</div>
         <div
           className={cn("header__burger", { header__burger_active: menu })}
           onClick={toggleMenu}
@@ -47,29 +48,68 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
           <span />
         </div>
         <nav className={cn("header__nav", { header__nav_active: menu })}>
+          <Link href="/about">
+            <a
+              className={cn({
+                header__link: true,
+                header__link_active: router.pathname == "/about",
+              })}
+            >
+              {t("about")}
+            </a>
+          </Link>
+          <Link href="/instruction">
+            <a
+              className={cn({
+                header__link: true,
+                header__link_active: router.pathname == "/instruction",
+              })}
+            >
+              {t("instruction")}
+            </a>
+          </Link>
+          <Link href="/price">
+            <a
+              className={cn({
+                header__link: true,
+                header__link_active: router.pathname == "/price",
+              })}
+            >
+              {t("price")}
+            </a>
+          </Link>
+          <Link href="/contacts">
+            <a
+              className={cn({
+                header__link: true,
+                header__link_active: router.pathname == "/contacts",
+              })}
+            >
+              {t("contacts")}
+            </a>
+          </Link>
           {!isAuth && (
-            <Link href="/">
-              <a
-                className={cn({
-                  header__link: true,
-                  header__link_active: router.pathname == "/",
-                })}
-              >
-                {t("main")}
-              </a>
-            </Link>
-          )}
-          {!isAuth && (
-            <Link href="/auth">
-              <a
-                className={cn({
-                  header__link: true,
-                  header__link_active: router.pathname == "/auth",
-                })}
-              >
-                {t("auth")}
-              </a>
-            </Link>
+            <div className={cn("auth_block")}>
+              <Link href="/auth">
+                <a
+                  className={cn({
+                    header__link: true,
+                    header__link_active: router.pathname == "/auth",
+                  })}
+                >
+                  {t("register")}
+                </a>
+              </Link>
+              <Link href="/auth">
+                <a
+                  className={cn({
+                    header__link: true,
+                  })}
+                >
+                  <MainBtn text={t("auth")} class="login" />
+                </a>
+              </Link>
+            </div>
           )}
           {isAuth && (
             <>

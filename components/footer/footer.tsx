@@ -12,12 +12,41 @@ const Footer: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
 
   return (
     <footer className={cn("footer")}>
-      <span>аудиорасшифровщик.рф © 2021</span>
-      <Link href="/contacts">
-        <a suppressHydrationWarning className={cn("footer__link")}>
-          {t("contacts")}
-        </a>
-      </Link>
+      <div className={cn("footer__row")}>
+        <div className={cn("footer__row__logo")}>
+          <span>аудиорасшифровщик.рф</span>
+        </div>
+        <div className={cn("footer__row__links")}>
+          <Link href="/">
+            <a suppressHydrationWarning className={cn("footer__link")}>
+              {t("about")}
+            </a>
+          </Link>
+          <Link href="/">
+            <a suppressHydrationWarning className={cn("footer__link")}>
+              {t("instruction")}
+            </a>
+          </Link>
+          <Link href="/">
+            <a suppressHydrationWarning className={cn("footer__link")}>
+              {t("price")}
+            </a>
+          </Link>
+          <Link href="/contacts">
+            <a suppressHydrationWarning className={cn("footer__link")}>
+              {t("contacts")}
+            </a>
+          </Link>
+        </div>
+      </div>
+      <div className={cn("footer__block")}>
+        <a href="http://">Политика конфиденциальности</a>
+        <a href="http://">Пользовательское соглашение</a>
+        <span>Разработчик: @audiotext_admin</span>
+      </div>
+      <div className={cn("footer__block")}>
+        <span>аудиорасшифровщик.рф © 2021</span>
+      </div>
     </footer>
   );
 };

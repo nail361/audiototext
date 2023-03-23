@@ -33,23 +33,27 @@
   padding: 10px;
   padding-top: 16px;
 
-  &-row {
+  &-column {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    max-width: 960px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 1024px;
     margin: 0 auto;
 
     &__logo {
-      width: 35%;
       z-index: 3;
+      font-weight: 700;
+      font-size: 1.4rem;
+      margin-bottom: 10px;
     }
   }
 
   &__nav {
-    width: 65%;
-    text-align: right;
+    display: flex;
     z-index: 2;
+    flex-direction: row;
+    align-items: center;
 
     @media (max-width: 899px) {
       position: fixed;
@@ -128,9 +132,20 @@
     }
   }
 
+  .auth_block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 40px;
+  }
+
   &__link {
     cursor: pointer;
-    margin-right: 1.5rem;
+    font-size: 16px;
+
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
 
     @media (max-width: 899px) {
       display: inline-block;
@@ -177,5 +192,5 @@
 .row {
   display: flex;
   flex-direction: row;
-  max-width: 960px;
+  max-width: 1024px;
 }

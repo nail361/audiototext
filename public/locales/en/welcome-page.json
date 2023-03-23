@@ -4,37 +4,62 @@
     "line2": "of audio and video",
     "line3": "into text"
   },
-  "description": "Use an audio transcriber, save your time!",
-  "list": {
-    "li1": "Удобный редактор с метками времени",
-    "li2": "Выгрузка текста и монтажного листа для подкастов",
-    "li3": "Понимаем русский и английский"
-  },
-  "startBtn": "let's start!",
+  "description": "Поручите расшифровку машине, оставьте силы для творчества",
+  "startBtn": "Let's start!",
   "features": [
     {
-      "title": "Легко загрузить",
+      "title": "Простая загрузка",
       "description": "поддержка распространённых форматов (mp3, wav, flac, opus, mp4, avi и другие)"
     },
     {
       "title": "Автоматизация",
-      "description": "автоматическое распознавание аудио и видео в текст"
+      "description": "весь процесс автоматизирован, быстрый результат"
     },
     {
-      "title": "Два языка",
+      "title": "Мультиязычность",
       "description": "понимаем речь на русском и английском языках"
     },
     {
       "title": "Отзывчивый редактор",
-      "description": "навигация по аудио/видео кликом по тексту, подцветка проигрываемого отрывка"
+      "description": "навигация по аудио/видео кликом по тексту, подсветка проигрываемого отрывка, правка текста"
     },
     {
       "title": "Метрики текста",
       "description": "подсчёт продолжительности оставшегося и выделенного текста"
     },
     {
-      "title": "Экспорт",
-      "description": "скачайте монтажный лист после ваших правок или текст расшифровки"
+      "title": "Поддержка",
+      "description": "пишите в чат на сайте или в телеграм"
     }
-  ]
+  ],
+  "exportBlock": {
+    "export": "Export",
+    "description": "Download reslut",
+    "rows": [
+      {
+        "title": "TXT",
+        "description": "text"
+      },
+      {
+        "title": "SUB",
+        "description": "subtitles"
+      },
+      {
+        "title": "EDL",
+        "description": "list"
+      }
+    ]
+  },
+  "instructionBlock": {
+    "howItWorks": "How it works",
+    "uploadBtn": "UPLOAD FILE",
+    "rows": ["Upload file", "Detect", "Download"]
+  },
+  "priceBlock": {
+    "howMuch": "How much?",
+    "price": "1.2",
+    "seconds": "seconds",
+    "startBtn": "START",
+    "offer": "Получите первые 3 часа аудиорасшифровки бесплатно"
+  }
 }
