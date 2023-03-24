@@ -1,14 +1,20 @@
 {
-  "choose_audio": "Choose media",
+  "upload_file": {
+    "title": "Загрузить файл",
+    "description": "Нажмите для выбора файла или просто перетащите в эту область"
+  },
   "choosen_audio": "Choosen: ",
   "no_audio": "No media, upload a new one",
   "table": {
     "caption": "Media list",
     "date": "Date",
+    "lang": "Language",
     "name": "Name",
     "duration": "Duration",
+    "actions": "Actions",
     "cost": "Cost",
-    "detect": "Detect for: ",
+    "detect": "Detect",
+    "download": "Download",
     "edit": "Edit",
     "delete": "Detele"
   },
@@ -17,7 +23,12 @@
     "en": "english"
   },
   "delete_prompt": {
-    "title": "Are you sure to delete?",
-    "text": "This media will be remove forever"
+    "title": "Deleting",
+    "text": "This media will be remove forever",
+    "delete": "DELETE"
+  },
+  "detect_prompt": {
+    "title": "Detect",
+    "detect": "DETECT"
   }
 }

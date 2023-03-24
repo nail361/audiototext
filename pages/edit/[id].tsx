@@ -17,7 +17,7 @@ import Player from "../../components/player";
 import TextBlock from "../../components/textBlock";
 import { textData } from "../../types/textData";
 import useAPI from "../../hooks/use-api";
-import Prompt from "../../components/prompt";
+import Prompt from "../../components/prompt/basic";
 
 import DownloadTextFile from "../../utils/downloadTextFile";
 import { generateUniqId } from "../../utils/utils";

@@ -159,8 +159,8 @@
       &::after {
         content: "";
         position: absolute;
-        top: -8px;
-        right: -35px;
+        top: 0;
+        right: -40px;
         background-image: url("/icons/wallet.png");
         background-repeat: no-repeat;
         display: block;

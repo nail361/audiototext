@@ -1,0 +1,49 @@
+.detect-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+
+  h1 {
+    padding-top: 25px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .cost-block {
+    margin: 15px 0;
+
+    &__title {
+      color: #dfe4ff;
+      font-size: 1.1rem;
+    }
+
+    &__price {
+      font-size: 1.5rem;
+    }
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    padding-left: 20px;
+    height: 100%;
+    padding-top: 30px;
+
+    &__title {
+      color: #dfe4ff;
+      font-size: 1.1rem;
+      margin-right: 15px;
+    }
+  }
+
+  &__image {
+    position: absolute;
+    right: -26px;
+    bottom: 100px;
+    width: 300px;
+    height: 200px;
+  }
+}

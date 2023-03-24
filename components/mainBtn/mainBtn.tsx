@@ -10,7 +10,7 @@ type MainBtnType = {
   text: string;
   icon?: any;
   class?: string;
-  onClickCallback?: () => void;
+  onClickCallback?: any;
 };
 
 function MainBtn(props: MainBtnType) {

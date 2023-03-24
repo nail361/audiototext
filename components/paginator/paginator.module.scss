@@ -11,12 +11,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: $light-color;
-    border-radius: 5px;
-    min-width: 30px;
-    height: 30px;
+    border-radius: 10px;
+    min-width: 50px;
+    height: 50px;
     color: white;
     margin: 0 5px;
+    font-size: 1.2rem;
+    font-weight: 700;
 
     > a {
       width: 100%;
@@ -24,15 +25,14 @@
     }
 
     &.selected {
-      background-color: $main-color;
+      background: linear-gradient(360deg, #433cc3 0%, #736deb 104.08%);
     }
 
     &:hover {
-      background-color: $main-color;
     }
 
     &.disabled {
-      background-color: lightgray;
+      display: none;
       cursor: auto;
     }
   }

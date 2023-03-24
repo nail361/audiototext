@@ -2,12 +2,16 @@
 
 .row {
   border-radius: 5px;
-  box-shadow: 0px 2px 2px 1px rgba(34, 60, 80, 0.1);
   position: relative;
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
   width: 100%;
+
+  &_selected {
+    background-color: rgba(86, 113, 255, 0.15);
+    border-radius: 15px;
+  }
 
   @media (max-width: 900px) {
     width: 80%;
@@ -18,10 +22,28 @@
   &__cell {
     padding: 10px;
     width: 150px;
-    height: 50px;
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1rem;
+
     overflow: hidden;
-    white-space: nowrap;
     text-overflow: ellipsis;
+
+    .flag {
+      width: 50px;
+      height: 40px;
+      background-repeat: no-repeat;
+      background-position: center;
+
+      &_ru {
+        background-image: url("/icons/ru-flag.png");
+      }
+      &_en {
+        background-image: url("/icons/en-flag.png");
+      }
+    }
 
     @media (max-width: 900px) {
       &:not(:last-child) {
@@ -29,14 +51,10 @@
       }
     }
 
-    &:not(:last-child) {
-      border-right: 1px solid lightgray;
-    }
-
     &:last-child {
       display: flex;
       flex-direction: row;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       flex: 1;
     }
@@ -45,66 +63,59 @@
   &__play-btn {
     cursor: pointer;
     position: absolute;
-    width: 35px;
-    height: 35px;
-    background-color: $main-color;
-    border-radius: 50%;
-    top: 50%;
-    left: -40px;
-    transform: translateY(-50%);
-    background-size: 20px;
-    background-position-y: center;
-    background-position-x: 60%;
+    width: 40px;
+    height: 40px;
+    top: 11px;
+    left: -45px;
+    background-size: 40px;
 
     background-repeat: no-repeat;
     background-image: url("/icons/audio/play.png");
 
     &_playing {
       background-image: url("/icons/audio/pause.png");
-      background-position-x: 50%;
     }
   }
 
-  &__edit,
   &__delete,
-  &__detect {
+  &__download {
     background-repeat: no-repeat;
     display: inline-block;
     cursor: pointer;
-    height: 40px;
+    height: 45px;
     &_hide {
       display: none;
     }
   }
-
-  &__detect {
-    display: flex;
-    align-items: center;
-    background-image: url("/icons/audio/detect.png");
-    background-position-x: 90%;
-    background-position-y: center;
-    background-size: 30px;
-    text-align: left;
-    width: 80px;
-    margin-left: 15px;
-    font-weight: 500;
-    background-color: $main-color;
-    border-radius: 5px;
-    padding: 5px 5px;
-    color: white;
-  }
-
   &__delete,
-  &__edit {
-    background-color: $main-color;
-    width: 40px;
-    border-radius: 50%;
-    background-size: 25px;
+  &__download {
+    width: 45px;
+    background-size: 45px;
     background-position: center;
   }
 
-  &__edit {
-    background-image: url("/icons/audio/edit.png");
+  &__edit,
+  &__detect {
+    display: flex;
+    cursor: pointer;
+
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 130px;
+    height: 45px;
+    background: rgba(97, 89, 254, 0.6);
+    border-radius: 5px;
+  }
+
+  &__detect {
+    width: 200px;
+    background: rgba(61, 5, 218, 0.77);
+  }
+
+  &__download {
+    margin-left: 10px;
+    background-image: url("/icons/audio/download.png");
   }
 
   &__delete {

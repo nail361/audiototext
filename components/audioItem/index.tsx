@@ -11,7 +11,7 @@ import styles from "./audioItem.module.scss";
 const cn = classNames.bind(styles);
 
 type AudioListType = {
-  onDetectAudio: (id: number, cost: number) => void;
+  onDetectAudio: (id: number) => void;
   onEditAudio: (id: number) => void;
   onDeleteAudio: (id: number) => void;
   detecting: boolean;
@@ -47,8 +47,18 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
     setPlaying((prevState) => !prevState);
   };
 
+  const downloadAudio = () => {
+    if (audioRef.current == null) return;
+
+    const link = document.createElement("a");
+    link.href = audioRef.current.src;
+    link.click();
+  };
+
   return (
-    <div className={cn("row")}>
+    <div
+      className={cn("row", { row_selected: !props.ready && !props.detecting })}
+    >
       <div
         className={cn("row__play-btn", {
           "row__play-btn_playing": playing,
@@ -61,40 +71,51 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
         className={cn("row__audio")}
         src={props.src}
       />
-      <div className={cn("row__cell")}>{props.date}</div>
       <div className={cn("row__cell")}>{props.name}</div>
+      <div className={cn("row__cell")}>
+        <div
+          className={cn("flag", {
+            flag_ru: true && props.ready,
+            flag_en: false && props.ready,
+          })}
+        />
+      </div>
       <div className={cn("row__cell")}>{getStringTime(props.duration)}</div>
+      <div className={cn("row__cell")}>{props.date}</div>
       <div className={cn("row__cell")} style={{ position: "relative" }}>
         {props.detecting && <Loader overlay={false} top={"-20%"} />}
         {!props.ready && !props.detecting && (
           <>
-            <select>
-              <option value="ru">{t("language.ru")}</option>
-              <option value="en">{t("language.en")}</option>
-            </select>
             <div
-              title={`${t("table.detect")} ${props.cost}руб.`}
               className={cn("row__detect")}
-              onClick={() => props.onDetectAudio(props.id, props.cost)}
+              onClick={() => props.onDetectAudio(props.id)}
             >
-              {props.cost}
+              {t("table.detect")}
             </div>
           </>
         )}
-        <div
-          title={t("table.edit")}
-          className={cn("row__edit", {
-            row__edit_hide: !props.ready,
-          })}
-          onClick={() => props.onEditAudio(props.id)}
-        ></div>
+        {props.ready && (
+          <>
+            <div
+              className={cn("row__edit")}
+              onClick={() => props.onEditAudio(props.id)}
+            >
+              {t("table.edit")}
+            </div>
+            <div
+              title={t("table.download")}
+              className={cn("row__download")}
+              onClick={downloadAudio}
+            />
+          </>
+        )}
         <div
           title={t("table.delete")}
           className={cn("row__delete", {
             row__delete_hide: props.detecting,
           })}
           onClick={() => props.onDeleteAudio(props.id)}
-        ></div>
+        />
       </div>
     </div>
   );

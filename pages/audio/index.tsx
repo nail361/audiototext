@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import Dropzone from "react-dropzone";
 import type { NextPage, GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -9,7 +10,8 @@ import { RootState } from "../../store";
 import { useSelector, useDispatch } from "react-redux";
 import { walletActions } from "../../store/wallet";
 import Audio from "../../models/complexAudio";
-import Prompt from "../../components/prompt";
+import DeletePrompt from "../../components/prompt/detele";
+import DetectPrompt from "../../components/prompt/detect";
 import AudioItem from "../../components/audioItem";
 import Loader from "../../components/loader";
 import useAPI from "../../hooks/use-api";
@@ -95,12 +97,7 @@ const Audio: NextPage = () => {
 
   const readFiles = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target!.files;
-    if (!files) {
-      return;
-    }
-
-    // setFilesCount(files.length);
-    sendAudioToServer(files);
+    onDropFileHandler(files);
   };
 
   const sendAudioToServer = (files: FileList) => {
@@ -141,11 +138,35 @@ const Audio: NextPage = () => {
     onAudioListSuccess(data);
   };
 
-  const detectAudio = (id: number, cost: number) => {
-    if (money < cost) {
-      router.push("/wallet");
-      return;
-    }
+  const detectAudioPrompt = (id: number) => {
+    const curAudio = audio.find((audioItem) => audioItem.id == id);
+
+    if (curAudio == null) return;
+
+    setPromptDialog(
+      //@ts-ignore
+      <DetectPrompt
+        t={t}
+        money={money}
+        date={curAudio.date}
+        name={curAudio.name}
+        duration={curAudio.duration}
+        lang={"ru"}
+        cost={curAudio.cost}
+        onAccept={() => {
+          detectAudio(id);
+          closePromptDialog();
+        }}
+        onDeny={closePromptDialog}
+      />
+    );
+  };
+
+  const detectAudio = (id: number) => {
+    // if (money < cost) {
+    //   router.push("/wallet");
+    //   return;
+    // }
 
     const newAudio = audio.map((audio) => {
       if (audio.id == id) audio.detecting = true;
@@ -190,10 +211,8 @@ const Audio: NextPage = () => {
   const deleteAudioPrompt = (id: number) => {
     setPromptDialog(
       //@ts-ignore
-      <Prompt
+      <DeletePrompt
         t={t}
-        title={t("delete_prompt.title")}
-        text={t("delete_prompt.text")}
         onAccept={() => {
           deleteAudio(id);
           closePromptDialog();
@@ -238,6 +257,14 @@ const Audio: NextPage = () => {
     getAudio(newPage);
   };
 
+  const onDropFileHandler = (files: any) => {
+    if (!files) {
+      return;
+    }
+
+    sendAudioToServer(files);
+  };
+
   if (audio.length) {
     audioList = (
       <>
@@ -245,9 +272,11 @@ const Audio: NextPage = () => {
           <h3>{t("table.caption")}</h3>
         </div>
         <div className={cn("head")}>
-          <div>{t("table.date")}</div>
           <div>{t("table.name")}</div>
+          <div>{t("table.lang")}</div>
           <div>{t("table.duration")}</div>
+          <div>{t("table.date")}</div>
+          <div>{t("table.actions")}</div>
         </div>
         <div className={cn("body")}>
           {audio.map((audio) => (
@@ -257,7 +286,7 @@ const Audio: NextPage = () => {
               {...audio}
               onDeleteAudio={deleteAudioPrompt}
               onEditAudio={editAudio}
-              onDetectAudio={detectAudio}
+              onDetectAudio={detectAudioPrompt}
               t={t}
             />
           ))}
@@ -271,40 +300,54 @@ const Audio: NextPage = () => {
   return (
     <>
       {promptDialog}
-      <div className={cn("file-uploader")}>
-        <input
-          name="file-uploader"
-          id="file-uploader"
-          multiple
-          type="file"
-          accept="audio/*,video/*"
-          className={cn("file-uploader__input")}
-          onChange={readFiles}
-        />
-        <label
-          htmlFor="file-uploader"
-          className={cn("file-uploader__btn", {
-            "file-uploader__btn_disabled": isUpload,
-          })}
-        >
-          <span className={cn("icon-wrapper")}>
-            <Image
-              className={cn("icon-wrapper__icon", {
-                "icon-wrapper__icon_spin": isUpload,
-              })}
-              src={isUpload ? "/icons/loading.png" : "/icons/upload.png"}
-              alt="Выбрать файл"
-              width={25}
-              height={25}
+      <Dropzone onDrop={onDropFileHandler}>
+        {({ getRootProps, getInputProps, isDragActive }) => (
+          <div
+            className={cn("file-uploader")}
+            {...getRootProps({
+              onClick: (event) => event.stopPropagation(),
+            })}
+          >
+            <input
+              {...getInputProps()}
+              name="file-uploader"
+              id="file-uploader"
+              multiple
+              type="file"
+              accept="audio/*,video/*"
+              className={cn("file-uploader__input")}
+              onChange={readFiles}
             />
-          </span>
-          <span>
-            {filesCount
-              ? `${t("choosen_audio")} ${filesCount}`
-              : t("choose_audio")}
-          </span>
-        </label>
-      </div>
+            <label
+              htmlFor="file-uploader"
+              className={cn("file-uploader__btn", {
+                "file-uploader__btn_drag": isDragActive,
+                "file-uploader__btn_disabled": isUpload,
+              })}
+            >
+              {isUpload && (
+                <span className={cn("icon-wrapper")}>
+                  <Image
+                    className={cn("icon-wrapper__icon_spin")}
+                    src={"/icons/loading.png"}
+                    alt=""
+                    width={25}
+                    height={25}
+                  />
+                </span>
+              )}
+              <span>
+                {filesCount
+                  ? `${t("choosen_audio")} ${filesCount}`
+                  : t("upload_file.title")}
+              </span>
+              <span className={cn("file-uploader__btn__description")}>
+                {t("upload_file.description")}
+              </span>
+            </label>
+          </div>
+        )}
+      </Dropzone>
       <div className={cn("audio-list")}>
         {isLoading && <Loader height="100px" />}
         {audioList}

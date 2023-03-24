@@ -112,7 +112,7 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
             </div>
           )}
           {isAuth && (
-            <>
+            <div className={cn("auth_block")}>
               <Link href="/audio">
                 <a
                   className={cn({
@@ -144,7 +144,7 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
                   {money} р.
                 </a>
               </Link>
-            </>
+            </div>
           )}
         </nav>
       </div>
