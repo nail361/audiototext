@@ -32,10 +32,73 @@
     height: 100%;
     padding-top: 30px;
 
+    &__item {
+      height: 50px;
+    }
+
     &__title {
       color: #dfe4ff;
       font-size: 1.1rem;
       margin-right: 15px;
+    }
+  }
+
+  &__lang-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__lang {
+    display: flex;
+    flex-direction: row;
+
+    input {
+      display: none;
+    }
+
+    label {
+      display: flex;
+      justify-content: center;
+      width: 160px;
+      height: 50px;
+      cursor: pointer;
+      user-select: none;
+      z-index: 1;
+
+      &.ru,
+      &.en {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &::before {
+          content: "";
+          display: inline-block;
+          margin-right: 5px;
+          width: 36px;
+          height: 26px;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+
+        &_checked {
+          background: rgba(86, 113, 255, 0.15);
+          border-radius: 15px;
+        }
+      }
+
+      &.ru {
+        &::before {
+          background-image: url("/icons/ru-flag.png");
+        }
+      }
+
+      &.en {
+        &::before {
+          background-image: url("/icons/en-flag.png");
+        }
+      }
     }
   }
 

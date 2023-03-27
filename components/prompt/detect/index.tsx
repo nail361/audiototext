@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import type { WithTranslation } from "next-i18next";
 import Image from "next/image";
 
@@ -15,7 +15,6 @@ type PromptType = {
   date: string;
   name: string;
   duration: number;
-  lang: string;
   cost: number;
   onAccept: <T>(params: T) => void;
   onDeny: () => void;
@@ -24,36 +23,68 @@ type PromptType = {
 function DetectPrompt(props: PromptType & WithTranslation) {
   const { t } = props;
   const duration = getStringTime(props.duration);
+  const [lang, setLang] = useState("ru");
+
+  const onChangeLang = (event: ChangeEvent<HTMLInputElement>) => {
+    setLang(event.target.name);
+  };
 
   return (
-    <BasicPrompt onDeny={props.onDeny}>
+    <BasicPrompt onDeny={props.onDeny} height="500px">
       <div className={cn("detect-block")}>
         <h1>{t("detect_prompt.title")}</h1>
         <div className={cn("detect-block__column")}>
-          <p>
+          <div className={cn("detect-block__column__item")}>
             <span className={cn("detect-block__column__title")}>
               {t("table.date")}
             </span>
             <span>{props.date}</span>
-          </p>
-          <p>
+          </div>
+          <div className={cn("detect-block__column__item")}>
             <span className={cn("detect-block__column__title")}>
               {t("table.name")}
             </span>
             <span>{props.name}</span>
-          </p>
-          <p>
+          </div>
+          <div className={cn("detect-block__column__item")}>
             <span className={cn("detect-block__column__title")}>
               {t("table.duration")}
             </span>
             <span>{duration}</span>
-          </p>
-          <p>
+          </div>
+          <div className={cn("detect-block__lang-block")}>
             <span className={cn("detect-block__column__title")}>
               {t("table.lang")}
             </span>
-            <span>{props.lang}</span>
-          </p>
+            <div className={cn("detect-block__lang")}>
+              <input
+                type="radio"
+                name="ru"
+                id="langRadioRu"
+                checked={lang == "ru"}
+                onChange={onChangeLang}
+              />
+              <label
+                className={cn("ru", { ru_checked: lang == "ru" })}
+                htmlFor="langRadioRu"
+              >
+                Русский
+              </label>
+              <input
+                type="radio"
+                name="en"
+                id="langRadioEn"
+                checked={lang == "en"}
+                onChange={onChangeLang}
+              />
+              <label
+                className={cn("en", { en_checked: lang == "en" })}
+                htmlFor="langRadioEn"
+              >
+                Английский
+              </label>
+            </div>
+          </div>
           <div className={cn("cost-block")}>
             <p className={cn("cost-block__title")}>{t("table.cost")}</p>
             <p className={cn("cost-block__price")}>

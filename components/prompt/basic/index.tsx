@@ -7,13 +7,19 @@ const cn = classNames.bind(styles);
 
 type PromptType = {
   children: any;
+  height?: string;
   onDeny: () => void;
 };
 
 function BasicPrompt(props: PromptType) {
+  const popupHeight = props.height ? props.height : "";
+
   return (
     <>
-      <div className={cn("card", "prompt-window")}>
+      <div
+        className={cn("card", "prompt-window")}
+        style={{ height: popupHeight }}
+      >
         {props.children}
         <div className={cn("prompt-window__close")} onClick={props.onDeny} />
       </div>

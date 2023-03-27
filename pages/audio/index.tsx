@@ -151,7 +151,6 @@ const Audio: NextPage = () => {
         date={curAudio.date}
         name={curAudio.name}
         duration={curAudio.duration}
-        lang={"ru"}
         cost={curAudio.cost}
         onAccept={() => {
           detectAudio(id);
