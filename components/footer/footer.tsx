@@ -17,32 +17,37 @@ const Footer: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
           <span>аудиорасшифровщик.рф</span>
         </div>
         <div className={cn("footer__row__links")}>
-          <Link href="/">
+          <Link href={"/#about"}>
             <a suppressHydrationWarning className={cn("footer__link")}>
               {t("about")}
             </a>
           </Link>
-          <Link href="/">
+          <Link href={"/#instruction"}>
             <a suppressHydrationWarning className={cn("footer__link")}>
               {t("instruction")}
             </a>
           </Link>
-          <Link href="/">
+          <Link href={"/#iprice"}>
             <a suppressHydrationWarning className={cn("footer__link")}>
               {t("price")}
-            </a>
-          </Link>
-          <Link href="/contacts">
-            <a suppressHydrationWarning className={cn("footer__link")}>
-              {t("contacts")}
             </a>
           </Link>
         </div>
       </div>
       <div className={cn("footer__block")}>
-        <a href="http://">Политика конфиденциальности</a>
-        <a href="http://">Пользовательское соглашение</a>
-        <span>Разработчик: @audiotext_admin</span>
+        <a href="https://">Политика конфиденциальности</a>
+        <a href="https://">Пользовательское соглашение</a>
+        <span>
+          Разработчик:{" "}
+          <a
+            href="https://t.me/audiototext"
+            target={"_blank"}
+            rel="noreferrer"
+            className={cn("contact")}
+          >
+            audiotext
+          </a>
+        </span>
       </div>
       <div className={cn("footer__block")}>
         <span>аудиорасшифровщик.рф © 2021</span>

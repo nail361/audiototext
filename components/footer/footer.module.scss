@@ -17,7 +17,7 @@
   margin-bottom: 20px;
 
   &__block {
-    * {
+    > * {
       margin-left: 30px;
     }
   }
@@ -36,9 +36,18 @@
 
   &__link {
     margin-left: 30px;
+  }
 
-    &:hover {
-      text-decoration: underline;
+  .contact {
+    &::before {
+      display: inline-block;
+      content: "";
+      width: 32px;
+      height: 32px;
+      background-image: url("/icons/contacts/icon_telegram.png");
+      background-position: center;
+      transform: translateY(10px);
+      margin-right: 5px;
     }
   }
 }

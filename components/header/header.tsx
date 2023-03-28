@@ -48,44 +48,19 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
           <span />
         </div>
         <nav className={cn("header__nav", { header__nav_active: menu })}>
-          <Link href="/about">
-            <a
-              className={cn({
-                header__link: true,
-                header__link_active: router.pathname == "/about",
-              })}
-            >
+          <Link href={"/#about"}>
+            <a suppressHydrationWarning className={cn("header__link")}>
               {t("about")}
             </a>
           </Link>
-          <Link href="/instruction">
-            <a
-              className={cn({
-                header__link: true,
-                header__link_active: router.pathname == "/instruction",
-              })}
-            >
+          <Link href={"/#instruction"}>
+            <a suppressHydrationWarning className={cn("header__link")}>
               {t("instruction")}
             </a>
           </Link>
-          <Link href="/price">
-            <a
-              className={cn({
-                header__link: true,
-                header__link_active: router.pathname == "/price",
-              })}
-            >
+          <Link href={"/#iprice"}>
+            <a suppressHydrationWarning className={cn("header__link")}>
               {t("price")}
-            </a>
-          </Link>
-          <Link href="/contacts">
-            <a
-              className={cn({
-                header__link: true,
-                header__link_active: router.pathname == "/contacts",
-              })}
-            >
-              {t("contacts")}
             </a>
           </Link>
           {!isAuth && (

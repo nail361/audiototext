@@ -98,6 +98,7 @@ const Welcome: NextPage = () => {
           </div>
         </div>
       </div>
+      <div id="about" />
       <div className={cn("statistic-block")}>
         <div className={cn("statistic-block__item")}>
           &#62; 500 пользователей
@@ -176,6 +177,7 @@ const Welcome: NextPage = () => {
             />
           </div>
         </div>
+        <div id="instruction" />
         <div
           className={cn("export-block__column", "export-block__column_right")}
         >
@@ -212,7 +214,7 @@ const Welcome: NextPage = () => {
             onClickCallback={onStartClickHandler}
           />
         </div>
-        <div className={cn("price-block__right-side")}>
+        <div className={cn("price-block__right-side")} id="price">
           <div className={cn("description")}>{t("priceBlock.offer")}</div>
           <Image
             src="/images/priceImg.png"
