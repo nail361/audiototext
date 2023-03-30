@@ -58,9 +58,14 @@ const Header: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
               {t("instruction")}
             </a>
           </Link>
-          <Link href={"/#iprice"}>
+          <Link href={"/#price"}>
             <a suppressHydrationWarning className={cn("header__link")}>
               {t("price")}
+            </a>
+          </Link>
+          <Link href={"/contacts"}>
+            <a suppressHydrationWarning className={cn("header__link")}>
+              {t("contacts")}
             </a>
           </Link>
           {!isAuth && (

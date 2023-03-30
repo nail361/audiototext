@@ -23,8 +23,8 @@ const Welcome: NextPage = () => {
 
   for (let i = 0; i < featuresArr.length; i++) {
     featuresArr[i] = (
-      <div key={i} className={cn("item")}>
-        <div className={cn("item__description")}>
+      <div key={i} className={cn("card", "features-block__feature")}>
+        <div className={cn("features-block__description")}>
           <h1>{t(`features.${i}.title`)}</h1>
           <p>{t(`features.${i}.description`)}</p>
         </div>
@@ -50,7 +50,7 @@ const Welcome: NextPage = () => {
   for (let i = 0; i < instructionArr.length; i++) {
     instructionArr[i] = (
       <div key={i} className={cn("item")}>
-        <div className={cn("icon")}>{i}</div>
+        <div className={cn("card", "icon")}>{i + 1}</div>
         <p>{t(`instructionBlock.rows.${i}`)}</p>
       </div>
     );
@@ -215,16 +215,20 @@ const Welcome: NextPage = () => {
           />
         </div>
         <div className={cn("price-block__right-side")} id="price">
-          <div className={cn("description")}>{t("priceBlock.offer")}</div>
-          <Image
-            src="/images/priceImg.png"
-            alt="export"
-            width={500}
-            height={500}
-            sizes="50vw"
-            priority={true}
-            objectFit="contain"
-          />
+          <div className={cn("card", "price-block__description")}>
+            {t("priceBlock.offer")}
+          </div>
+          <div className={cn("price-block__image")}>
+            <Image
+              src="/images/priceImg.png"
+              alt="export"
+              width={500}
+              height={500}
+              sizes="50vw"
+              priority={true}
+              objectFit="contain"
+            />
+          </div>
         </div>
       </div>
     </>

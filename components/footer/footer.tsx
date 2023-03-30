@@ -27,9 +27,14 @@ const Footer: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
               {t("instruction")}
             </a>
           </Link>
-          <Link href={"/#iprice"}>
+          <Link href={"/#price"}>
             <a suppressHydrationWarning className={cn("footer__link")}>
               {t("price")}
+            </a>
+          </Link>
+          <Link href={"/contacts"}>
+            <a suppressHydrationWarning className={cn("footer__link")}>
+              {t("contacts")}
             </a>
           </Link>
         </div>
@@ -37,17 +42,6 @@ const Footer: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
       <div className={cn("footer__block")}>
         <a href="https://">Политика конфиденциальности</a>
         <a href="https://">Пользовательское соглашение</a>
-        <span>
-          Разработчик:{" "}
-          <a
-            href="https://t.me/audiototext"
-            target={"_blank"}
-            rel="noreferrer"
-            className={cn("contact")}
-          >
-            audiotext
-          </a>
-        </span>
       </div>
       <div className={cn("footer__block")}>
         <span>аудиорасшифровщик.рф © 2021</span>
