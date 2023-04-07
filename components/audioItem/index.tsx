@@ -71,8 +71,9 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
         className={cn("row__audio")}
         src={props.src}
       />
-      <div className={cn("row__cell")}>{props.name}</div>
-      <div className={cn("row__cell")}>
+      <div className={cn("row__cell", "row__cell_mobile")}>{props.name}</div>
+      <div className={cn("row__cell", "row__cell_desctop")}>{props.name}</div>
+      <div className={cn("row__cell", "row__cell_desctop")}>
         <div
           className={cn("flag", {
             flag_ru: true && props.ready,
@@ -80,9 +81,14 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
           })}
         />
       </div>
-      <div className={cn("row__cell")}>{getStringTime(props.duration)}</div>
-      <div className={cn("row__cell")}>{props.date}</div>
-      <div className={cn("row__cell")} style={{ position: "relative" }}>
+      <div className={cn("row__cell", "row__cell_desctop")}>
+        {getStringTime(props.duration)}
+      </div>
+      <div className={cn("row__cell", "row__cell_desctop")}>{props.date}</div>
+      <div
+        className={cn("row__cell", "row__cell_actions")}
+        style={{ position: "relative" }}
+      >
         {props.detecting && <Loader overlay={false} top={"-20%"} />}
         {!props.ready && !props.detecting && (
           <>
