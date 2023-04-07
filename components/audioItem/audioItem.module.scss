@@ -30,10 +30,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
-    &_mobile {
-      flex: 1;
-    }
-
     .flag {
       width: 50px;
       height: 40px;
@@ -49,14 +45,29 @@
     }
 
     @media (max-width: 900px) {
-      &_desctop {
+      &_flag {
         display: none;
       }
-    }
 
-    @media (min-width: 900px) {
-      &_mobile {
-        display: none;
+      &_name {
+        flex: 1;
+        align-items: flex-end;
+      }
+
+      &_duration,
+      &_date {
+        position: absolute;
+        font-size: 0.8rem;
+        color: #ffffff80;
+        top: -15px;
+      }
+
+      &_duration {
+        left: 62%;
+      }
+
+      &_date {
+        left: 0;
       }
     }
 
@@ -109,15 +120,6 @@
     background-position: center;
   }
 
-  &__detect {
-    width: 200px;
-    background: rgba(61, 5, 218, 0.77);
-  }
-
-  &__edit {
-    width: 130px;
-  }
-
   &__edit,
   &__detect {
     display: flex;
@@ -128,11 +130,28 @@
     align-items: center;
     height: 45px;
     background: rgba(97, 89, 254, 0.6);
+    background-size: 45px;
+    background-position: center;
+    background-repeat: no-repeat;
     border-radius: 5px;
+  }
 
+  &__detect {
+    width: 200px;
+    background: rgba(61, 5, 218, 0.77);
     @media (max-width: 900px) {
       width: 45px;
       font-size: 0;
+      background-image: url("/icons/audio/detect.png");
+    }
+  }
+
+  &__edit {
+    width: 130px;
+    @media (max-width: 900px) {
+      width: 45px;
+      font-size: 0;
+      background-image: url("/icons/audio/edit.png");
     }
   }
 

@@ -71,9 +71,8 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
         className={cn("row__audio")}
         src={props.src}
       />
-      <div className={cn("row__cell", "row__cell_mobile")}>{props.name}</div>
-      <div className={cn("row__cell", "row__cell_desctop")}>{props.name}</div>
-      <div className={cn("row__cell", "row__cell_desctop")}>
+      <div className={cn("row__cell", "row__cell_name")}>{props.name}</div>
+      <div className={cn("row__cell", "row__cell_flag")}>
         <div
           className={cn("flag", {
             flag_ru: true && props.ready,
@@ -81,10 +80,10 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
           })}
         />
       </div>
-      <div className={cn("row__cell", "row__cell_desctop")}>
+      <div className={cn("row__cell", "row__cell_duration")}>
         {getStringTime(props.duration)}
       </div>
-      <div className={cn("row__cell", "row__cell_desctop")}>{props.date}</div>
+      <div className={cn("row__cell", "row__cell_date")}>{props.date}</div>
       <div
         className={cn("row__cell", "row__cell_actions")}
         style={{ position: "relative" }}
