@@ -6,6 +6,7 @@ import { useTranslation } from "next-i18next";
 import { RootState } from "../../store";
 import { walletActions } from "../../store/wallet";
 import { useSelector, useDispatch } from "react-redux";
+import useAPI from "../../hooks/use-api";
 
 import classNames from "classnames/bind";
 import styles from "./wallet.module.scss";
@@ -18,7 +19,9 @@ const Wallet: NextPage = () => {
   const [minutes, setMinutes] = useState(0);
   const [cost, setCost] = useState(0);
   const money = useSelector((state: RootState) => state.wallet.money);
+  const token = useSelector((state: RootState) => state.auth.token);
   const dispatch = useDispatch();
+  const { isLoading: isWaitingUrl, sendRequest } = useAPI();
 
   useEffect(() => {
     // fetch();   get costPerMinute
@@ -28,8 +31,23 @@ const Wallet: NextPage = () => {
   }, [costPerMinute]);
 
   const addMoney = () => {
-    console.log("Add money");
-    dispatch(walletActions.add(50));
+    const formData = new FormData();
+    formData.append("amount", cost.toString());
+
+    sendRequest(
+      {
+        url: `addMoney`,
+        headers: { Authorization: "Bearer " + token },
+        body: formData,
+      },
+      onAddMoneyHandler
+    );
+
+    // dispatch(walletActions.add(50));
+  };
+
+  const onAddMoneyHandler = (data: { url: string }) => {
+    window.open(data.url, "_blank", "noreferrer");
   };
 
   const onMinutesChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +80,7 @@ const Wallet: NextPage = () => {
                 name="minute"
                 type="number"
                 value={minutes}
+                min={1}
                 onChange={onMinutesChange}
               />
             </div>

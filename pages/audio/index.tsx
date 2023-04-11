@@ -27,6 +27,18 @@ const Paginator = React.lazy(() => import("../../components/paginator"));
 const itemsPerPage = 10;
 let curDetecting = 0;
 
+type AudioFromServer = {
+  id: number;
+  src: string;
+  date: string;
+  name: string;
+  duration: number;
+  is_video: number;
+  cost: number;
+  ready: boolean;
+  lang: string | null;
+};
+
 type AudioList = Audio & {
   detecting: boolean;
 };
@@ -47,18 +59,7 @@ const Audio: NextPage = () => {
   const onAudioListSuccess = (data: {
     status: string;
     totalPages: number;
-    data: [
-      {
-        id: number;
-        src: string;
-        date: string;
-        name: string;
-        duration: number;
-        is_video: number;
-        cost: number;
-        ready: boolean;
-      }
-    ];
+    data: [AudioFromServer];
   }) => {
     setPageCount(data.totalPages);
     const audio = data.data.map((audioItem) => {
@@ -122,18 +123,7 @@ const Audio: NextPage = () => {
   const onUploadSuccess = (data: {
     status: string;
     totalPages: number;
-    data: [
-      {
-        id: number;
-        src: string;
-        date: string;
-        name: string;
-        duration: number;
-        is_video: number;
-        cost: number;
-        ready: boolean;
-      }
-    ];
+    data: [AudioFromServer];
   }) => {
     onAudioListSuccess(data);
   };
@@ -221,8 +211,8 @@ const Audio: NextPage = () => {
     setPromptDialog(null);
   };
 
-  const detectingReady = (data: { moneyLeft: number }) => {
-    dispatch(walletActions.update(data.moneyLeft));
+  const detectingReady = (data: { money: number }) => {
+    dispatch(walletActions.update(data.money));
 
     const newAudio = audio.map((audio) => {
       if (audio.id == curDetecting) {
