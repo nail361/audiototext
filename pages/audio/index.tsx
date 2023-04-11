@@ -339,6 +339,7 @@ const Audio: NextPage = () => {
       </div>
       {pageCount > 1 && (
         <div className={cn("pagination-wrapper")}>
+          {/* @ts-ignore */}
           <Paginator pageCount={pageCount} handlePageClick={handlePageClick} />
         </div>
       )}

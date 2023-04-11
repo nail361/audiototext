@@ -4,6 +4,7 @@
   "download": "Download text",
   "revertDialog": {
     "title": "Revert original text",
-    "text": "Current text will be lost, are you sure?"
+    "text": "Current text will be lost, are you sure?",
+    "acceptText": "Revert"
   }
 }

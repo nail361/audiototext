@@ -61,6 +61,7 @@ function VideoPlayer(props: VideoType) {
     <Draggable
       bounds="body"
       nodeRef={videoWrapper}
+      // @ts-ignore
       onStop={onDragStop}
       handle={`.${handleSelector}`}
       position={{ x: positionX, y: positionY }}

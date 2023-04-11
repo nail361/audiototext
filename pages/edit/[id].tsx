@@ -17,7 +17,7 @@ import Player from "../../components/player";
 import TextBlock from "../../components/textBlock";
 import { textData } from "../../types/textData";
 import useAPI from "../../hooks/use-api";
-import Prompt from "../../components/prompt/basic";
+import SimplePrompt from "../../components/prompt/simple";
 
 import DownloadTextFile from "../../utils/downloadTextFile";
 import { generateUniqId } from "../../utils/utils";
@@ -287,11 +287,10 @@ const Edit: NextPage<TypePageProps> = (params) => {
 
   const dialogRevert = () => {
     setPromptDialog(
-      //@ts-ignore
-      <Prompt
-        t={t}
+      <SimplePrompt
         title={t("revertDialog.title")}
         text={t("revertDialog.text")}
+        acceptText={t("revertDialog.acceptText")}
         onAccept={() => {
           revertTextToOriginal();
           closePromptDialog();

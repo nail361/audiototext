@@ -61,7 +61,7 @@ const useAPI = () => {
     async (
       requestConfig: RequestConfig,
       onSuccess: (data: any) => void,
-      onError?: (errorMsg: string) => void
+      onError?: (errorMsg: any) => void
     ) => {
       const curCache: Cache = checkCache(requestConfig.url);
 
