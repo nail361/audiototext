@@ -75,8 +75,8 @@ function AudioItem(props: Audio & AudioListType & WithTranslation) {
       <div className={cn("row__cell", "row__cell_flag")}>
         <div
           className={cn("flag", {
-            flag_ru: true && props.ready,
-            flag_en: false && props.ready,
+            flag_ru: props.ready && props.lang != null && props.lang == "ru",
+            flag_en: props.ready && props.lang != null && props.lang == "en",
           })}
         />
       </div>

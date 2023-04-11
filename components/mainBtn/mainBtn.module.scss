@@ -24,8 +24,10 @@
     box-shadow: 0px 0px 50px rgba(86, 113, 255, 0.25);
   }
 
-  &:disabled {
-    box-shadow: 0px 4px 0px #312c96, 0px 0px 50px rgba(86, 113, 255, 0.25);
+  &_disabled {
+    opacity: 0.5;
+    cursor: auto;
+    pointer-events: none;
   }
 
   &_login {

@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
+import Link from "next/link";
 import type { WithTranslation } from "next-i18next";
 import Image from "next/image";
 
@@ -16,7 +17,7 @@ type PromptType = {
   name: string;
   duration: number;
   cost: number;
-  onAccept: <T>(params: T) => void;
+  onAccept: (params: any) => void;
   onDeny: () => void;
 };
 
@@ -24,6 +25,8 @@ function DetectPrompt(props: PromptType & WithTranslation) {
   const { t } = props;
   const duration = getStringTime(props.duration);
   const [lang, setLang] = useState("ru");
+
+  const notEnoughMoney: boolean = props.cost > props.money;
 
   const onChangeLang = (event: ChangeEvent<HTMLInputElement>) => {
     setLang(event.target.name);
@@ -95,8 +98,14 @@ function DetectPrompt(props: PromptType & WithTranslation) {
             text={t("detect_prompt.detect")}
             class={cn("detect")}
             icon={"/icons/btn/fire.png"}
-            onClickCallback={props.onAccept}
+            disabled={notEnoughMoney}
+            onClickCallback={() => props.onAccept(lang)}
           />
+          {notEnoughMoney && (
+            <Link href="/wallet">
+              <a className={cn("link")}>{t("detect_prompt.notEnoughMoney")}</a>
+            </Link>
+          )}
         </div>
       </div>
       <div className={cn("detect-block__image")}>

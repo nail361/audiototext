@@ -152,8 +152,8 @@ const Audio: NextPage = () => {
         name={curAudio.name}
         duration={curAudio.duration}
         cost={curAudio.cost}
-        onAccept={() => {
-          detectAudio(id);
+        onAccept={(lang) => {
+          detectAudio(id, lang);
           closePromptDialog();
         }}
         onDeny={closePromptDialog}
@@ -161,12 +161,7 @@ const Audio: NextPage = () => {
     );
   };
 
-  const detectAudio = (id: number) => {
-    // if (money < cost) {
-    //   router.push("/wallet");
-    //   return;
-    // }
-
+  const detectAudio = (id: number, lang: string) => {
     const newAudio = audio.map((audio) => {
       if (audio.id == id) audio.detecting = true;
       return audio;
@@ -175,6 +170,7 @@ const Audio: NextPage = () => {
 
     const formData = new FormData();
     formData.append("audioID", id.toString());
+    formData.append("lang", lang);
 
     curDetecting = parseInt(id.toString());
 

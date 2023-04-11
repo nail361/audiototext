@@ -29,6 +29,7 @@
   },
   "detect_prompt": {
     "title": "Detect",
-    "detect": "DETECT"
+    "detect": "DETECT",
+    "notEnoughMoney": "Not enough money"
   }
 }

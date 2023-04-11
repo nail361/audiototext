@@ -10,6 +10,7 @@ type MainBtnType = {
   text: string;
   icon?: any;
   class?: string;
+  disabled?: boolean;
   onClickCallback?: any;
 };
 
@@ -18,7 +19,11 @@ function MainBtn(props: MainBtnType) {
 
   return (
     <div
-      className={cn("main-button", propClass)}
+      className={cn(
+        "main-button",
+        { "main-button_disabled": props.disabled || false },
+        propClass
+      )}
       onClick={() => {
         props.onClickCallback ? props.onClickCallback() : null;
       }}
