@@ -549,6 +549,7 @@ const Edit: NextPage<TypePageProps> = (params) => {
               name="wordsPerPageSelect"
               id="wordsPerPageSelect"
               defaultValue={300}
+              className={cn("controls-block__select")}
               onChange={onWordsPerPageSelect}
             >
               <option value="100">100</option>

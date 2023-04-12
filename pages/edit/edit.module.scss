@@ -32,6 +32,11 @@
     justify-content: center;
     font-weight: 500;
 
+    &__select {
+      background-color: $light-color;
+      color: white;
+    }
+
     * {
       margin-left: 15px;
     }
