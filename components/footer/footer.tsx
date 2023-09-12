@@ -40,11 +40,19 @@ const Footer: FunctionComponent<WithTranslation> = (props: WithTranslation) => {
         </div>
       </div>
       <div className={cn("footer__block")}>
-        <a href="https://">Политика конфиденциальности</a>
-        <a href="https://">Пользовательское соглашение</a>
+        <Link href={"/agreement"}>
+          <a suppressHydrationWarning>
+            Пользовательское соглашение
+          </a>
+        </Link>
+        <Link href={"/privacy"}>
+          <a suppressHydrationWarning>
+            Политика конфиденциальности
+          </a>
+        </Link>
       </div>
       <div className={cn("footer__block")}>
-        <span>аудиорасшифровщик.рф © 2021</span>
+        <span>аудиорасшифровщик.рф © 2023</span>
       </div>
     </footer>
   );

@@ -240,6 +240,18 @@
             font-size: 0.7rem;
           }
 
+          .soon {
+            display: none;
+          }
+
+          &.disabled {
+            color: gray;
+
+            .soon {
+              display: block;
+            }
+          }
+
           @media (max-width: 900px) {
             h1 {
               font-size: 1.1rem;

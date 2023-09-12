@@ -37,9 +37,10 @@ const Welcome: NextPage = () => {
 
   for (let i = 0; i < exportArr.length; i++) {
     exportArr[i] = (
-      <div key={i} className={cn("item")}>
+      <div key={i} className={cn("item", [1,2].indexOf(i) !== -1 && "disabled")}>
         <h1>{t(`exportBlock.rows.${i}.title`)}</h1>
         <p>{t(`exportBlock.rows.${i}.description`)}</p>
+        <p className={cn('soon')}>({t(`exportBlock.soon`)})</p>
       </div>
     );
   }

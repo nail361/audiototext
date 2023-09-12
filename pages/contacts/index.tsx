@@ -17,6 +17,7 @@ const Contacts: NextPage = () => {
         <p>
           <strong>{t("email")}:</strong> shubinm.ip@gmail.com
         </p>
+        <br/>
         <p>
           <strong>{t("itn")}:</strong> 711613514228
         </p>
@@ -26,15 +27,12 @@ const Contacts: NextPage = () => {
         <p>
           <strong>{t("sp")}:</strong> ИП Шубин Мирослав Александрович
         </p>
+        <br/>
+        <p>
+          <strong>{t("support_title")}:</strong> <a href="https://t.me/audiototext">https://t.me/audiototext</a>
+        </p>
       </div>
       <div className={cn("messengers")}>
-        <a
-          href="https://t.me/audiototext"
-          title={t("telega-group")}
-          target="_blank"
-          rel="noreferrer"
-          className={cn("messengers__icon", "messengers__icon_telegram")}
-        ></a>
         <a
           href="https://t.me/audiototext_admin"
           title={t("telega-developer")}

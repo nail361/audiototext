@@ -2,6 +2,8 @@ import React, { FunctionComponent, useEffect } from "react";
 import { useTranslation } from "next-i18next";
 import Header from "../header/header";
 import Footer from "../footer/footer";
+//import "../support/support.js";
+
 
 import classes from "./layout.module.scss";
 import ProtectedPages from "../../hoc/protectedPages";

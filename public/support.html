@@ -1,0 +1,28 @@
+<div>
+    <script> window.intergramId = "2023837952";
+
+    var hour_now = new Date().toLocaleTimeString('ru-RU', { timeZone: 'Europe/Moscow', hour: '2-digit'});
+    var time_full = new Date().toLocaleTimeString('ru-RU', { timeZone: 'Europe/Moscow', hour: '2-digit', minute:'2-digit' });
+
+    var integram_title = 'Поддержка';
+    var introMessage   = 'Привет! Моё имя Мирослав. Онлайн каждый день с 11:00 до 22:00 по Москве. Напишите ваш вопрос, проблему или пожелание.';
+    var autoResponse   = 'Ваше сообщение отправлено. Моё местное время ' + time_full + ' и обычно я оффлайн, но возможно отвечу в течение минуты. Не закрывайте окно!';
+
+    if (hour_now >= 11 && hour_now <= 22) {
+        integram_title += ' Online';
+        autoResponse   = 'Ваше сообщение отправлено. Постараюсь ответить в течение минуты. Не закрывайте окно!';
+    }
+
+    window.intergramCustomizations = {
+        titleClosed: integram_title,
+        titleOpen: integram_title,
+        introMessage: introMessage,
+        autoResponse: autoResponse,
+        autoNoResponse: 'Не успел за минуту :( Если ответ на вопрос для вас важен - пожалуйста, напишите ваш Email, я обязательно с вами свяжусь. Либо напишите в телеграмм @audiototext_admin или на почту shubin@аудиорасшифровщик.рф',
+        placeholderText: 'Сообщение',
+        // mainColor: "#E91E63", // Can be any css supported color 'red', 'rgb(255,87,34)', etc
+        alwaysUseFloatingButton: false // Use the mobile floating button also on large screens
+    };
+    </script>
+    <script id="intergram" type="text/javascript" src="https://www.intergram.xyz/js/widget.js"></script>
+</div>

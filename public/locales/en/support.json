@@ -1,0 +1,11 @@
+{
+  "support": {
+    "title": "Support",
+    "hi_write_your_theme": "Hey! My name is Miroslav. Online every day from 11:00 to 22:00 Moscow time. Write your question, problem or wish.",
+    "message_sent_offline": "Your message has been sent. My local time ",
+    "dont_close_window": " and usually I'm offline, but maybe I'll answer within a minute. Don't close the window! ",
+    "message_sent_online": "Your message has been sent. I will try to answer within a minute. Don't close the window!",
+    "write_to_email": "Didn't have time for a minute :( If the answer to the question is important to you, please write your Email here, I will definitely contact you. Or write to telegram @audiototext_admin or to email shubin@audiototext.ru",
+    "message": "Message"
+  }
+}

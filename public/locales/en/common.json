@@ -8,6 +8,8 @@
   "audio": "Media",
   "profile": "Profile",
   "contacts": "Contacts",
+  "agreement": "Agreement",
+  "privacy": "Privacy Policy",
   "prompt": {
     "accept": "OK",
     "deny": "CANCEL"
