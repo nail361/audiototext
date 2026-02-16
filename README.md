@@ -1,34 +1,115 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AudioToText - Платформа для транскрибирования аудио и видео
 
-## Getting Started
+AudioToText - это современное веб-приложение для автоматической транскрибирования аудио и видео файлов с последующим редактированием текста. Платформа позволяет пользователям загружать медиафайлы, получать автоматически распознанный текст, редактировать его и экспортировать в различные форматы.
 
-First, run the development server:
+## Основные особенности
+
+- **Загрузка аудио и видео файлов** - Поддержка различных форматов аудио и видео файлов
+- **Автоматическое распознавание речи** - Использование передовых технологий для точного распознавания речи
+- **Редактирование текста** - Интерактивная возможность редактирования распознанного текста
+- **Экспорт текста** - Возможность сохранения отредактированного текста в различных форматах
+- **Мультиязычность** - Поддержка нескольких языков при распознавании
+- **Управление файлами** - Просмотр, удаление и управление загруженными файлами
+- **Система оплаты** - Интеграция с системой оплаты для доступа к платным функциям
+
+## Технологии
+
+- **Frontend**: Next.js, React, TypeScript, Sass
+- **State Management**: Redux Toolkit
+- **UI Components**: Custom components с использованием SCSS модулей
+- **API**: REST API интеграция
+- **Локализация**: i18next для многоязычности
+- **Форматирование**: Prettier, ESLint
+
+## Структура проекта
+
+```
+audiototext/
+├── components/          # UI компоненты
+│   ├── audioItem/       # Компонент отображения аудио файла
+│   ├── footer/          # Футер сайта
+│   ├── header/          # Хедер сайта
+│   ├── layout/          # Базовая разметка страниц
+│   ├── loader/          # Лоадер
+│   ├── mainBtn/         # Кнопки главной страницы
+│   ├── paginator/       # Пагинация
+│   ├── player/          # Медиа плеер
+│   ├── prompt/          # Диалоговые окна
+│   └── textBlock/       # Блоки текста для редактирования
+├── hooks/               # Кастомные хуки
+├── models/              # Модели данных
+├── pages/               # Страницы приложения
+│   ├── audio/           # Страница управления аудио файлами
+│   ├── edit/            # Страница редактирования текста
+│   ├── auth/            # Страница авторизации
+│   └── profile/         # Страница профиля
+├── public/              # Публичные ресурсы
+├── store/               # Store для управления состоянием
+├── styles/              # Глобальные стили
+├── types/               # Типы TypeScript
+└── utils/               # Вспомогательные функции
+```
+
+## Установка и запуск
+
+### Требования
+
+- Node.js (версия 14 или выше)
+- npm или yarn
+
+### Шаги установки
+
+1. Клонируйте репозиторий:
+
+```bash
+git clone https://github.com/ваш-репозиторий/audiototext.git
+cd audiototext
+```
+
+2. Установите зависимости:
+
+```bash
+npm install
+# или
+yarn install
+```
+
+3. Запустите разработческий сервер:
 
 ```bash
 npm run dev
-# or
+# или
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Приложение будет доступно по адресу http://localhost:3000
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Использование
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+1. **Регистрация/Вход** - Перейдите на страницу авторизации для создания аккаунта или входа
+2. **Загрузка файлов** - На странице аудио файлов перетащите или выберите аудио/видео файлы
+3. **Распознавание** - Нажмите кнопку "Распознать" для получения текста
+4. **Редактирование** - Отредактируйте текст на странице редактирования
+5. **Экспорт** - Сохраните отредактированный текст в нужном формате
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## API
 
-## Learn More
+Приложение взаимодействует с сервером через REST API:
 
-To learn more about Next.js, take a look at the following resources:
+- `GET /getAudioList` - Получение списка аудио файлов
+- `POST /uploadAudio` - Загрузка аудио файлов
+- `POST /detectAudio` - Распознавание аудио
+- `GET /getDetectedAudio` - Получение распознанного аудио
+- `POST /saveText` - Сохранение отредактированного текста
+- `POST /resetWords` - Восстановление оригинального текста
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Дополнительная информация
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Локализация**: Приложение поддерживает английский и русский языки
+- **Адаптивность**: Полностью адаптивный дизайн для всех устройств
+- **Безопасность**: Используется JWT токены для аутентификации
+- **Производительность**: Оптимизированная работа с большими файлами
 
-## Deploy on Vercel
+## Лицензия
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Этот проект лицензирован под MIT License - см. файл LICENSE для подробностей.
